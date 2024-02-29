@@ -17,9 +17,9 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=1234
     volumes:
-      - postgresBookService:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
 
 
 volumes:
   postgres:
-    name: postgresBookService
+    name: postgresCOK

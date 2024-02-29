@@ -1,43 +1,51 @@
 package ru.pishemzapuskayem.backendbookservice.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+
 @Entity
+@Table(name = "account")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class User extends AbstractEntity {
+public class Account extends AbstractEntity{
 
+    @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "second_name")
     private String secondName;
 
+    @Column(name = "email")
     private String email;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "username")
     private String username;
 
+    @Column(name = "rating")
     private Integer rating;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "enabled")
     private Boolean enable;
+
 
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "avatar_id")
     private FileAttachment avatar;
 }

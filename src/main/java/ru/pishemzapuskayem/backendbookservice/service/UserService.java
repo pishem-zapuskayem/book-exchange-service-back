@@ -3,20 +3,17 @@ package ru.pishemzapuskayem.backendbookservice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pishemzapuskayem.backendbookservice.model.entity.User;
-import ru.pishemzapuskayem.backendbookservice.repository.UserRepository;
+import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
+import ru.pishemzapuskayem.backendbookservice.repository.AccountRepository;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final AccountRepository userRepository;
 
-    public void registration(User user){
-
-
-
+    public void registration(Account user){
         userRepository.save(user);
     }
 }

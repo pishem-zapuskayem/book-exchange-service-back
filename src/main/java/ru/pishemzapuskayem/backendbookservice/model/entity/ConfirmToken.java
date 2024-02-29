@@ -1,5 +1,6 @@
 package ru.pishemzapuskayem.backendbookservice.model.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +12,15 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "confirm_token")
 public class ConfirmToken extends AbstractEntity{
 
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "id_account")
+    private Account user;
 
+    @Column(name = "expire_at")
     private LocalDateTime expireAt;
 
     private String token;

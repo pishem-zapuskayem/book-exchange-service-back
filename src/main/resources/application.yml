@@ -15,3 +15,16 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+  main:
+    allow-bean-definition-overriding: true
+
+jwt:
+  subject: user
+  issuer: course
+  secret: J7gzxsdfdsdsfsklill234czxcQgfJ7gQgfczxc
+  tokenExpiresIn: 432000
+
+urls:
+  me: ${BACKEND_URL:http://localhost:8080}
+  frontend: ${CLIENT_URL:http://localhost:4200}

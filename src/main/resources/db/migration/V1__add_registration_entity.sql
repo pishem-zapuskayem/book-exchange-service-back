@@ -1,46 +1,49 @@
-CREATE TABLE "User"
+CREATE TABLE "file"
 (
-    id         long,
-    FirstName  varchar(25),
-    LastName   varchar(50),
-    SecondName varchar(25),
-    Email      varchar(10),
-    UserName   varchar(20),
-    Password   varhcar(15),
-    Rating     int,
-    CreatedAt  timestap,
-    role       int
-)
+    id   SERIAL PRIMARY KEY,
+    path VARCHAR(255),
+    url  VARCHAR(255)
+);
 
-CREATE TABLE "UserAddress"
+CREATE TABLE "role"
 (
-    id            long,
-    IdUser        long references "User" (id),
-    AddrIndex     varchar(6),
-    AddrCity      varchar(15),
-    AddrStreet    varchar(25),
-    AddrHouse     varchar(5),
-    AddrStructure varchar(10),
-    AddrApart     varchar(3),
-    IsDefault     boolean
-)
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(255)
+);
 
-CREATE TABLE "ConfirmToken"
+CREATE TABLE "account"
 (
-    id       long,
-    idUser   long references "User" (id),
-    expireAt timestap,
-    token    UUID
-)
+    id          SERIAL PRIMARY KEY,
+    first_name  VARCHAR(25),
+    last_name   VARCHAR(50),
+    second_name VARCHAR(25),
+    email       VARCHAR(10),
+    username    VARCHAR(20),
+    password    VARCHAR(15),
+    rating      INT,
+    created_at  TIMESTAMP,
+    enabled     BOOLEAN,
+    role_id     INT REFERENCES "role" (id),
+    avatar_id   INT REFERENCES "file" (id)
+);
 
-CREATE TABLE "File"
+CREATE TABLE "account_address"
 (
-    id   long,
-    path varchar(255),
-    url  varchar(255)
-)
+    id             SERIAL PRIMARY KEY,
+    id_account     INT REFERENCES "account" (id),
+    addr_index     VARCHAR(6),
+    addr_city      VARCHAR(15),
+    addr_street    VARCHAR(25),
+    addr_house     VARCHAR(5),
+    addr_structure VARCHAR(10),
+    addr_apart     VARCHAR(3),
+    is_default     BOOLEAN
+);
 
-CREATE TABLE "Role"(
-    id long,
-    name varchar(255)
-)
+CREATE TABLE "confirm_token"
+(
+    id         SERIAL PRIMARY KEY,
+    id_account INT REFERENCES "account" (id),
+    expire_at  TIMESTAMP,
+    token      UUID
+);
