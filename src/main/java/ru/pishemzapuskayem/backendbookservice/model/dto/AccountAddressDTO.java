@@ -11,6 +11,7 @@ public class AccountAddressDTO {
     private Integer addrIndex;
     private String addrCity;
     private String addrStreet;
-    private String addrBuilding;
-    private String addrApartment;
+    private String addrHouse;
+    private String addrStructure;
+    private String addrApart;
 }

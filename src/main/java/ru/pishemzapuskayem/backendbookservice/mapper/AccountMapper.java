@@ -14,6 +14,8 @@ public class AccountMapper {
     private final AccountAddressMapper accountAddressMapper;
 
     public Account map(RegistrationRequestDTO registrationRequestDTO) {
-        return modelMapper.map(registrationRequestDTO, Account.class);
+        Account account = modelMapper.map(registrationRequestDTO, Account.class);
+        account.setAccountAddress(accountAddressMapper.map(registrationRequestDTO.getAddresses()));
+        return account;
     }
 }

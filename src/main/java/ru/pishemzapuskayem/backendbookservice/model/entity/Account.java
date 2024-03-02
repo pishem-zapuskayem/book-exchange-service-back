@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -39,6 +40,9 @@ public class Account extends AbstractEntity{
 
     @Column(name = "enabled")
     private Boolean enable;
+
+    @OneToMany(mappedBy = "account", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<AccountAddress> accountAddress;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

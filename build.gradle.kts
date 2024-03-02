@@ -29,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation ("org.modelmapper:modelmapper:3.1.1")
-    implementation("org.flywaydb:flyway-core")
+//    implementation("org.flywaydb:flyway-core")
     implementation ("net.coobird:thumbnailator:0.4.20")
     runtimeOnly("org.postgresql:postgresql")
     compileOnly("org.projectlombok:lombok")

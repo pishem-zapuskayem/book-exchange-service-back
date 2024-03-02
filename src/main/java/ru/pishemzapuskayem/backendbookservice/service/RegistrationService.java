@@ -11,22 +11,26 @@ import ru.pishemzapuskayem.backendbookservice.repository.AccountAddressRepositor
 import ru.pishemzapuskayem.backendbookservice.repository.AccountRepository;
 import ru.pishemzapuskayem.backendbookservice.repository.RoleRepository;
 
+import java.time.LocalDateTime;
+
+import static ru.pishemzapuskayem.backendbookservice.constants.Roles.ROLE_STUDENT;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RegistrationService {
 
     private final AccountRepository accountRepository;
-    private final AccountAddressRepository accountAddressRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final FileAttachmentService fileAttachmentService;
 
     @Transactional
-    public void registrationAccount(Account account, AccountAddress accountAddress, MultipartFile avatar) {
+    public void registrationAccount(Account account, MultipartFile avatar) {
         FileAttachment fileAttachment = fileAttachmentService.saveFile(avatar);
         account.setAvatar(fileAttachment);
-        Account accountSave = accountRepository.save(account);
-        accountAddress.setAccount(accountSave);
-        accountAddressRepository.save(accountAddress);
+        account.setCreatedAt(LocalDateTime.now());
+        account.setEnable(false);
+        account.setRole(roleService.findOrCreateByName(ROLE_STUDENT));
+        accountRepository.save(account);
     }
 }
