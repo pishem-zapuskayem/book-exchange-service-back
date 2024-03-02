@@ -18,5 +18,5 @@ public class RegistrationRequestDTO {
     private String email;
     private String username;
     private String password;
-    private List<AccountAddressDTO> addresses;
+    private AccountAddressDTO address;
 }

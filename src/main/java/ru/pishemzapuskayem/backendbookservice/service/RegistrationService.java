@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ConfirmToken;
@@ -30,11 +31,24 @@ public class RegistrationService {
 
     @Transactional
     public void registrationAccount(Account account, MultipartFile avatar) {
-        FileAttachment fileAttachment = fileAttachmentService.saveFile(avatar);
-        account.setAvatar(fileAttachment);
+        if (avatar != null) {
+            FileAttachment fileAttachment = fileAttachmentService.saveFile(avatar);
+            account.setAvatar(fileAttachment);
+        }
         account.setCreatedAt(LocalDateTime.now());
         account.setEnable(false);
         account.setRole(roleService.findOrCreateByName(ROLE_STUDENT));
+
+        Optional<Account> byEmail = accountRepository.findByEmail(account.getEmail());
+        Optional<Account> byUsername = accountRepository.findByUsername(account.getUsername());
+
+        if (byEmail.isPresent()){
+            throw new ApiException("Такой email уже есть");
+        }
+
+        if(byUsername.isPresent()){
+            throw new ApiException("Такой username уже используется");
+        }
 
         Account created = accountRepository.save(account);
 

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.pishemzapuskayem.backendbookservice.model.dto.RegistrationRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class AccountMapper {
@@ -15,7 +17,11 @@ public class AccountMapper {
 
     public Account map(RegistrationRequestDTO registrationRequestDTO) {
         Account account = modelMapper.map(registrationRequestDTO, Account.class);
-        account.setAccountAddress(accountAddressMapper.map(registrationRequestDTO.getAddresses()));
+        account.setAccountAddress(
+                List.of(
+                        accountAddressMapper.map(registrationRequestDTO.getAddress())
+                )
+        );
         return account;
     }
 }
