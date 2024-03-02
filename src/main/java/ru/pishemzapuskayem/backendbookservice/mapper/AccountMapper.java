@@ -11,8 +11,9 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 public class AccountMapper {
 
     private final ModelMapper modelMapper;
+    private final AccountAddressMapper accountAddressMapper;
 
-    public Account map(RegistrationRequestDTO registrationRequestDTO){
+    public Account map(RegistrationRequestDTO registrationRequestDTO) {
         return modelMapper.map(registrationRequestDTO, Account.class);
     }
 }

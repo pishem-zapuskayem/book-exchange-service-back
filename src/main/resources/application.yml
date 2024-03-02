@@ -28,3 +28,10 @@ jwt:
 urls:
   me: ${BACKEND_URL:http://localhost:8080}
   frontend: ${CLIENT_URL:http://localhost:4200}
+
+files:
+  storage-directory: ${STORAGE_DIRECTORY:./images}
+
+file:
+  images:
+    compression-quality: 0.2

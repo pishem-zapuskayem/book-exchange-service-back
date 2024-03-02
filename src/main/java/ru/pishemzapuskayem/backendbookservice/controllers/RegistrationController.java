@@ -28,8 +28,7 @@ public class RegistrationController {
     ) {
 
         registrationService.registrationAccount(
-                accountMapper.map(dto),
-                accountAddressMapper.map(dto.getAddress()),
+                accountMapper.map(dto), accountAddressMapper.map(dto.getAddress()),
                 avatar
         );
 

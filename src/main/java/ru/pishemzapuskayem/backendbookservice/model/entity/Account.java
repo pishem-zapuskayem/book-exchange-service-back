@@ -40,7 +40,6 @@ public class Account extends AbstractEntity{
     @Column(name = "enabled")
     private Boolean enable;
 
-
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

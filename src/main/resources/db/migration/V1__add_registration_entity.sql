@@ -23,27 +23,31 @@ CREATE TABLE "account"
     rating      INT,
     created_at  TIMESTAMP,
     enabled     BOOLEAN,
-    role_id     INT REFERENCES "role" (id),
-    avatar_id   INT REFERENCES "file" (id)
+    role_id     INT,
+    avatar_id   INT,
+    FOREIGN KEY (role_id) REFERENCES "role" (id),
+    FOREIGN KEY (avatar_id) REFERENCES "file" (id)
 );
 
 CREATE TABLE "account_address"
 (
     id             SERIAL PRIMARY KEY,
-    id_account     INT REFERENCES "account" (id),
+    id_account     INT,
     addr_index     VARCHAR(6),
     addr_city      VARCHAR(15),
     addr_street    VARCHAR(25),
     addr_house     VARCHAR(5),
     addr_structure VARCHAR(10),
     addr_apart     VARCHAR(3),
-    is_default     BOOLEAN
+    is_default     BOOLEAN,
+    FOREIGN KEY (id_account) REFERENCES "account" (id)
 );
 
 CREATE TABLE "confirm_token"
 (
     id         SERIAL PRIMARY KEY,
-    id_account INT REFERENCES "account" (id),
+    id_account INT,
     expire_at  TIMESTAMP,
-    token      UUID
+    token      UUID,
+    FOREIGN KEY (id_account) REFERENCES "account" (id)
 );

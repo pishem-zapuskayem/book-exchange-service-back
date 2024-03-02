@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountAddressDTO {
-    private Integer index;
-    private String city;
-    private String street;
-    private String building;
-    private String apartment;
+    private Integer addrIndex;
+    private String addrCity;
+    private String addrStreet;
+    private String addrBuilding;
+    private String addrApartment;
 }
