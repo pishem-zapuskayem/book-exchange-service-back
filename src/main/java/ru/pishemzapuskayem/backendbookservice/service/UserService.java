@@ -12,8 +12,4 @@ import ru.pishemzapuskayem.backendbookservice.repository.AccountRepository;
 public class UserService {
 
     private final AccountRepository userRepository;
-
-    public void registration(Account user){
-        userRepository.save(user);
-    }
 }

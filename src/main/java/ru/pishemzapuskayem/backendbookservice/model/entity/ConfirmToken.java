@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 @Entity
 @Table(name = "confirm_token")
 public class ConfirmToken extends AbstractEntity{
@@ -23,5 +25,6 @@ public class ConfirmToken extends AbstractEntity{
     @Column(name = "expire_at")
     private LocalDateTime expireAt;
 
+    private Boolean isConfirmed;
     private String token;
 }

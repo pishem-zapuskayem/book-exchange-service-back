@@ -2,10 +2,7 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pishemzapuskayem.backendbookservice.mapper.AccountAddressMapper;
 import ru.pishemzapuskayem.backendbookservice.mapper.AccountMapper;
@@ -32,6 +29,12 @@ public class RegistrationController {
                 avatar
         );
 
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<?> enableAccount(@RequestParam String token) {
+        registrationService.tryEnableAccount(token);
         return ResponseEntity.ok().build();
     }
 }

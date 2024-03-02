@@ -28,6 +28,7 @@ jwt:
 urls:
   me: ${BACKEND_URL:http://localhost:8080}
   frontend: ${CLIENT_URL:http://localhost:4200}
+  confirm-token-url: ${CONFIRM_TOKEN_URL:http://localhost:4200/auth/confirm}
 
 files:
   storage-directory: ${STORAGE_DIRECTORY:./images}
@@ -35,3 +36,15 @@ files:
 file:
   images:
     compression-quality: 0.2
+
+mail:
+  host: smtp.mail.ru
+  port: 465
+  username: "vl7shabyandex.ru@mail.ru"
+  password: KdeWxX43ytJsmttdpVua
+  protocol: smtps
+  smtps:
+    auth: true
+
+confirm-token:
+  expired-after: 30
