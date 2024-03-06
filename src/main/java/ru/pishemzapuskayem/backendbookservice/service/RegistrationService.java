@@ -1,22 +1,20 @@
 package ru.pishemzapuskayem.backendbookservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
-import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ConfirmToken;
 import ru.pishemzapuskayem.backendbookservice.model.entity.FileAttachment;
-import ru.pishemzapuskayem.backendbookservice.repository.AccountAddressRepository;
 import ru.pishemzapuskayem.backendbookservice.repository.AccountRepository;
-import ru.pishemzapuskayem.backendbookservice.repository.RoleRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static ru.pishemzapuskayem.backendbookservice.constants.Roles.ROLE_STUDENT;
+import static ru.pishemzapuskayem.backendbookservice.constants.Roles.ROLE_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +26,7 @@ public class RegistrationService {
     private final FileAttachmentService fileAttachmentService;
     private final TokenService tokenService;
     private final MailService mailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void registrationAccount(Account account, MultipartFile avatar) {
@@ -37,7 +36,7 @@ public class RegistrationService {
         }
         account.setCreatedAt(LocalDateTime.now());
         account.setEnable(false);
-        account.setRole(roleService.findOrCreateByName(ROLE_STUDENT));
+        account.setRole(roleService.findOrCreateByName(ROLE_USER));
 
         Optional<Account> byEmail = accountRepository.findByEmail(account.getEmail());
         Optional<Account> byUsername = accountRepository.findByUsername(account.getUsername());
@@ -49,6 +48,8 @@ public class RegistrationService {
         if(byUsername.isPresent()){
             throw new ApiException("Такой username уже используется");
         }
+
+        account.setPassword(passwordEncoder.encode(account.getPassword()));
 
         Account created = accountRepository.save(account);
 

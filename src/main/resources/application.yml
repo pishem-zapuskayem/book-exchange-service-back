@@ -48,3 +48,6 @@ mail:
 
 confirm-token:
   expired-after: 30
+
+server:
+  port: 8081
