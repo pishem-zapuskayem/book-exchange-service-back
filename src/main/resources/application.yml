@@ -5,6 +5,12 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:user}
     password: ${SPRING_DATASOURCE_PASSWORD:1234}
 
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:100MB}
+      max-request-size: ${MAX_FILE_SIZE:100MB}
+      enabled: true
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -35,7 +41,7 @@ files:
 
 file:
   images:
-    compression-quality: 0.2
+    compression-quality: ${COMPRESSION_QUALITY:0.2}
 
 mail:
   host: smtp.mail.ru
@@ -47,7 +53,7 @@ mail:
     auth: true
 
 confirm-token:
-  expired-after: 30
+  expired-after: ${EXPIRED_TIME:30}
 
 server:
-  port: 8081
+  port: ${SERVER_PORT:8080}
