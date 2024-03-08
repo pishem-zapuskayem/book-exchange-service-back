@@ -1,6 +1,7 @@
 package ru.pishemzapuskayem.backendbookservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import static ru.pishemzapuskayem.backendbookservice.constants.Roles.ROLE_USER;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class RegistrationService {
 
     private final AccountRepository accountRepository;
@@ -54,7 +56,11 @@ public class RegistrationService {
         Account created = accountRepository.save(account);
 
         ConfirmToken token = tokenService.createToken(created);
-        mailService.sendToken(created.getEmail(), token);
+        try {
+            mailService.sendToken(created.getEmail(), token);
+        } catch (Exception e){
+            log.info("Token таково "+ account.getEmail() +" : "+ token.getToken());
+        }
     }
 
     @Transactional
