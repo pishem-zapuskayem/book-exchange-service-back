@@ -33,4 +33,9 @@ public class AccountMapper {
         }
         return accountDTO;
     }
+
+    public Account map(Long accountId){
+        return (Account) new Account()
+                .setId(accountId);
+    }
 }
