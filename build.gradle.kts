@@ -31,6 +31,7 @@ dependencies {
     implementation ("org.modelmapper:modelmapper:3.1.1")
 //    implementation("org.flywaydb:flyway-core")
     implementation ("net.coobird:thumbnailator:0.4.20")
+    implementation("org.springframework.boot:spring-boot-starter-websocket:3.2.3")
     runtimeOnly("org.postgresql:postgresql")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
