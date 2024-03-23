@@ -28,7 +28,6 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
-
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtFilter jwtFilter;
 

@@ -1,9 +1,15 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/BookService}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/BookService}
     username: ${SPRING_DATASOURCE_USERNAME:user}
     password: ${SPRING_DATASOURCE_PASSWORD:1234}
+
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:100MB}
+      max-request-size: ${MAX_FILE_SIZE:100MB}
+      enabled: true
 
   jpa:
     hibernate:
@@ -11,10 +17,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
 
   main:
     allow-bean-definition-overriding: true
@@ -35,7 +37,7 @@ files:
 
 file:
   images:
-    compression-quality: 0.2
+    compression-quality: ${COMPRESSION_QUALITY:0.2}
 
 mail:
   host: smtp.mail.ru
@@ -47,4 +49,7 @@ mail:
     auth: true
 
 confirm-token:
-  expired-after: 30
+  expired-after: ${EXPIRED_TIME:30}
+
+server:
+  port: ${SERVER_PORT:8080}

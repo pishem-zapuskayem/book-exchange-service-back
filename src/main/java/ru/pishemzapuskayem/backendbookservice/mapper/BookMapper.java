@@ -29,4 +29,9 @@ public class BookMapper {
         );
         return book;
     }
+
+    public BookLiterary map(Long bookLiteraryId){
+        return (BookLiterary) new BookLiterary()
+                .setId(bookLiteraryId);
+    }
 }

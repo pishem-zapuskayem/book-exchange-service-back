@@ -16,7 +16,6 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
     private final AccountMapper accountMapper;
-    private final AccountAddressMapper accountAddressMapper;
 
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<?> signUp(

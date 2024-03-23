@@ -3,6 +3,7 @@ package ru.pishemzapuskayem.backendbookservice.mapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import ru.pishemzapuskayem.backendbookservice.model.dto.AccountDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.RegistrationRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 
@@ -23,5 +24,18 @@ public class AccountMapper {
                 )
         );
         return account;
+    }
+
+    public AccountDTO map(Account account) {
+        AccountDTO accountDTO = modelMapper.map(account, AccountDTO.class);
+        if (account.getAvatar() != null){
+            accountDTO.setUrlAvatar(account.getAvatar().getUrl());
+        }
+        return accountDTO;
+    }
+
+    public Account map(Long accountId){
+        return (Account) new Account()
+                .setId(accountId);
     }
 }
