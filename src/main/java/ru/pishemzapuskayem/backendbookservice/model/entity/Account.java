@@ -3,6 +3,7 @@ package ru.pishemzapuskayem.backendbookservice.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.pishemzapuskayem.backendbookservice.constants.Roles;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,4 +52,12 @@ public class Account extends AbstractEntity{
     @ManyToOne
     @JoinColumn(name = "avatar_id")
     private FileAttachment avatar;
+
+    @Transient
+    private boolean isAdmin;
+
+
+    public boolean isAdmin() {
+        return role != null && role.getName().equals(Roles.ROLE_ADMIN);
+    }
 }

@@ -1,4 +1,4 @@
-package ru.pishemzapuskayem.backendbookservice.model.entity;
+package ru.pishemzapuskayem.backendbookservice.model.entity.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Status {
-    NEW(7, "Новый"),
-    CLOSED(7, "Закрыто"),
-    IN_WORK(7, "В работе");
+    NEW(1, "Новый"),
+    CLOSED(2, "Закрыто"),
+    IN_WORK(3, "В работе");
 
     private final int id;
     private final String name;

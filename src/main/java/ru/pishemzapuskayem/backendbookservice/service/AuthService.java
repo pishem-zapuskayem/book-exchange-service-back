@@ -14,12 +14,20 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 public class AuthService {
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Optional<Account> getAuthenticated() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public Optional<Account> tryGetAuthenticated() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
+            .getContext().getAuthentication().getPrincipal();
         Account detachedAccount = userDetails.getUser();
         return Optional.ofNullable(entityManager.find(Account.class, detachedAccount.getId()));
+    }
+
+    public Account getAuthenticated() {
+        return tryGetAuthenticated().orElseThrow(
+                () -> new ApiException("account not found")
+        );
     }
 }
