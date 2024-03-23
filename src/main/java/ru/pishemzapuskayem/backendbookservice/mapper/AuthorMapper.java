@@ -20,6 +20,10 @@ public class AuthorMapper {
         return modelMapper.map(author, AuthorDTO.class);
     }
 
+    public Author map(AuthorDTO author) {
+        return modelMapper.map(author, Author.class);
+    }
+
     public Author map(Long authorId) {
         return (Author) new Author()
             .setId(authorId);
