@@ -30,6 +30,14 @@ public class BookMapper {
         return book;
     }
 
+    public BookLiterary map(BookDTO dto) {
+        BookLiterary book = modelMapper.map(dto, BookLiterary.class);
+        book.setAuthor(
+            authorMapper.map(dto.getAuthor())
+        );
+        return book;
+    }
+
     public BookLiterary map(Long bookLiteraryId){
         return (BookLiterary) new BookLiterary()
                 .setId(bookLiteraryId);
