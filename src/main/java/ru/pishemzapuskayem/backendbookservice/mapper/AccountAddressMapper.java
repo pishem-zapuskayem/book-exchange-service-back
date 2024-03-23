@@ -27,4 +27,18 @@ public class AccountAddressMapper {
 
         return accountAddresses;
     }
+
+    public List<AccountAddressDTO> mapDto(List<AccountAddress> accountAddress) {
+        List<AccountAddressDTO> accountAddressDTOS = new ArrayList<>();
+
+        for (AccountAddress address: accountAddress){
+            accountAddressDTOS.add(map(address));
+        }
+
+        return accountAddressDTOS;
+    }
+
+    public AccountAddressDTO map(AccountAddress address){
+        return modelMapper.map(address, AccountAddressDTO.class);
+    }
 }
