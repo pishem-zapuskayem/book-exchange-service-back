@@ -17,11 +17,9 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class OfferList extends AbstractEntity {
     @ManyToOne
-    @Column(nullable = false)
     @JoinColumn(referencedColumnName = "id", name = "idBookLiterary")
     private BookLiterary bookLiterary;
     @ManyToOne
-    @Column(nullable = false)
     @JoinColumn(name = "idUser", referencedColumnName = "id")
     private Account user;
     private String isbn;

@@ -20,5 +20,6 @@ public class BookLiterary extends AbstractEntity {
     private String note;
 
     @ManyToOne
+    @JoinColumn(name = "idAuthor", referencedColumnName = "id")
     private Author author;
 }
