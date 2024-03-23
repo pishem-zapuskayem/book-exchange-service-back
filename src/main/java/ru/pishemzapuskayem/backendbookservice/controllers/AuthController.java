@@ -35,7 +35,7 @@ public class AuthController {
     public ResponseEntity<AccountDTO> getMe(){
         return ResponseEntity.ok(
                 accountMapper.map(
-                        authService.getAuthenticated().get()
+                        authService.getAuthenticated()
                 )
         );
     }

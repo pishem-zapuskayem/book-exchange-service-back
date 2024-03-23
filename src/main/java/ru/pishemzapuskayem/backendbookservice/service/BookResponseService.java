@@ -22,7 +22,7 @@ public class BookResponseService {
     @Transactional
     public void createBookResponse(BookResponse bookResponse){
         bookResponse.setCreatedAt(LocalDateTime.now());
-        bookResponse.setAccount(authService.getAuthenticated().get());
+        bookResponse.setAccount(authService.getAuthenticated());
         bookResponse.setBookLiterary(bookService.getById(bookResponse.getBookLiterary().getId()));
         bookResponseRepository.save(bookResponse);
     }

@@ -24,10 +24,8 @@ public class BookResponse extends AbstractEntity {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "id_book_literary", referencedColumnName = "id")
     private BookLiterary bookLiterary;
 
     @ManyToOne
-    @JoinColumn(name = "id_user", referencedColumnName = "id")
     private Account account;
 }
