@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.pishemzapuskayem.backendbookservice.model.dto.AccountDTO;
+import ru.pishemzapuskayem.backendbookservice.model.dto.AccountUpdateDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.RegistrationRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 
@@ -37,5 +38,9 @@ public class AccountMapper {
     public Account map(Long accountId){
         return (Account) new Account()
                 .setId(accountId);
+    }
+
+    public Account map(AccountUpdateDTO accountDTO) {
+        return modelMapper.map(accountDTO, Account.class);
     }
 }
