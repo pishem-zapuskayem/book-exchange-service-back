@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum Status {
     NEW(1, "Новый"),
     CLOSED(2, "Закрыто"),
-    IN_WORK(3, "В работе");
+    IN_WORK(3, "В работе"),
+    AWAITING(4, "Ожидает подтверждения");
 
     private final int id;
     private final String name;

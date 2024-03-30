@@ -1,6 +1,7 @@
 package ru.pishemzapuskayem.backendbookservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
@@ -12,6 +13,7 @@ import ru.pishemzapuskayem.backendbookservice.repository.OfferListRepository;
 import ru.pishemzapuskayem.backendbookservice.repository.WishListRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +37,32 @@ public class BookExchangeService {
         wishList.setAddress(addr);
         wishListRepository.save(wishList);
         offerListRepository.save(offerList);
+    }
+
+    public List<WishList> findWishList(Status aNew){
+        var listOfWishes = wishListRepository.findByStatus(aNew);
+        for (WishList wish : listOfWishes) {
+            Hibernate.initialize(
+                wish.getUserLists()
+            );
+            wish.getUserLists().forEach(
+                ul -> Hibernate.initialize(ul.getCategories())
+            );
+        }
+        return listOfWishes;
+    }
+
+    //todo n+1
+    public List<OfferList> findOfferList(Status status) {
+        List<OfferList> listOfOffers = offerListRepository.findByStatus(status);
+        for (OfferList offerList : listOfOffers) {
+            Hibernate.initialize(
+                offerList.getUserLists()
+            );
+            offerList.getUserLists().forEach(
+                ul -> Hibernate.initialize(ul.getCategories())
+            );
+        }
+        return listOfOffers;
     }
 }
