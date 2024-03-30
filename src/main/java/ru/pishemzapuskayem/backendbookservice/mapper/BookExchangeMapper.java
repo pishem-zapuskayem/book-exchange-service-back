@@ -24,7 +24,7 @@ public class BookExchangeMapper {
         OfferList offerList = modelMapper.map(requestDTO.getOffer(), OfferList.class);
         offerList.setBookLiterary(bookMapper.map(requestDTO.getOffer().getBook()));
         offerList.setUser(accountMapper.map(requestDTO.getOffer().getId()));
-        UserList offerListOfCategories = categoryMapper.map(
+        UserList offerListOfCategories = categoryMapper.mapToList(
             requestDTO.getWishCategories(), TypeList.OFFER_LIST
         );
         offerList.setUserLists(List.of(offerListOfCategories));
@@ -35,7 +35,7 @@ public class BookExchangeMapper {
         WishList wishList = modelMapper.map(requestDTO.getWish(), WishList.class);
         wishList.setAddress(addressMapper.map(requestDTO.getAddress()));
         wishList.setUser(accountMapper.map(requestDTO.getWish().getUserId()));
-        UserList wishListOfCategories = categoryMapper.map(
+        UserList wishListOfCategories = categoryMapper.mapToList(
             requestDTO.getWishCategories(), TypeList.WISH_LIST
         );
         wishList.setUserLists(List.of(wishListOfCategories));
