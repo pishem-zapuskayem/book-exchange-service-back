@@ -53,6 +53,10 @@ public class RegistrationService {
 
         account.setPassword(passwordEncoder.encode(account.getPassword()));
 
+        if (account.getAccountAddress().isEmpty()) {
+            throw new ApiException("Адрес не указан");
+        }
+        account.getAccountAddress().get(0).setIsDefault(true);
         Account created = accountRepository.save(account);
 
         ConfirmToken token = tokenService.createToken(created);
