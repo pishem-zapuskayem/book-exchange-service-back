@@ -12,6 +12,7 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserValueCategory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -19,14 +20,15 @@ public class CategoryMapper {
 
     private final ModelMapper modelMapper;
 
-    public UserList mapToList(List<CategoryDTO> wishCategories, TypeList typeList) {
+    public UserList mapToList(Set<Long> wishCategoriesIds, TypeList typeList) {
         UserList listOfCategories = new UserList().setListType(typeList);
-        List<Category> categories = wishCategories.stream().map(this::mapRecursive).toList();
+        List<Category> categories = map(wishCategoriesIds);
         List<UserValueCategory> userValueCategories = categories.stream().map(
                 category -> new UserValueCategory()
                         .setCategory(category)
                         .setUserList(listOfCategories)
         ).toList();
+        listOfCategories.setCategories(userValueCategories);
         return listOfCategories;
     }
 
@@ -72,5 +74,13 @@ public class CategoryMapper {
         }
 
         return map.values().stream().toList();
+    }
+
+    public List<Category> map(Set<Long> ids) {
+        return ids.stream().map(id -> {
+            Category cat = new Category();
+            cat.setId(id);
+            return cat;
+        }).collect(Collectors.toList());
     }
 }
