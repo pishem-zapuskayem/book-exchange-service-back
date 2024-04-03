@@ -64,7 +64,7 @@ public class CategoryMapper {
                 );
             }
             if (category.getParent() != null) {
-                map.get(category.getParent()).getChildren().add(
+                map.get(category.getParent().getId()).getChildren().add(
                         new ChildCategoryResponseDTO(
                                 category.getId(),
                                 category.getName()
