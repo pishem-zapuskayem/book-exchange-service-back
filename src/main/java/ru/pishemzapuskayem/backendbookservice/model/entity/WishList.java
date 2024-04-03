@@ -1,5 +1,6 @@
 package ru.pishemzapuskayem.backendbookservice.model.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,7 @@ public class WishList extends AbstractEntity {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
     @Column(nullable = false)
+    @Schema(description = "состояние участия в обмене: свободен, отобран и т.п.")
     @Enumerated(EnumType.ORDINAL)
     private Status status;
     @ManyToOne

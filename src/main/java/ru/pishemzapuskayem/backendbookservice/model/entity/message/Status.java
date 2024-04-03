@@ -9,7 +9,9 @@ public enum Status {
     NEW(1, "Новый"),
     CLOSED(2, "Закрыто"),
     IN_WORK(3, "В работе"),
-    AWAITING(4, "Ожидает подтверждения");
+    AWAITING(4, "Ожидает подтверждения"),
+    FREE(5, "Свободен"),
+    RESERVED(6, "Участвует в обмене");
 
     private final int id;
     private final String name;

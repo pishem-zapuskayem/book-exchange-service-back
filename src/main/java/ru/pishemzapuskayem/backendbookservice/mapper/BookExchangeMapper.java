@@ -9,6 +9,7 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -18,27 +19,34 @@ public class BookExchangeMapper {
     private final BookMapper bookMapper;
     private final AccountAddressMapper addressMapper;
     private final CategoryMapper categoryMapper;
-    private final AccountMapper accountMapper;
 
     public OfferList mapOfferList(CreateExchangeRequestDTO requestDTO) {
         OfferList offerList = modelMapper.map(requestDTO.getOffer(), OfferList.class);
         offerList.setBookLiterary(bookMapper.map(requestDTO.getOffer().getBook()));
-        offerList.setUser(accountMapper.map(requestDTO.getOffer().getId()));
-        UserList offerListOfCategories = categoryMapper.mapToList(
-            requestDTO.getOfferCategoriesIds(), TypeList.OFFER_LIST
-        );
-        offerList.setUserLists(List.of(offerListOfCategories));
+
+        List<UserList> userLists = new ArrayList<>();
+        userLists.add(
+            categoryMapper.mapToList(
+            requestDTO.getOffer().getOfferCategoriesIds(),
+            TypeList.OFFER_LIST
+        ));
+        offerList.setUserLists(userLists);
+
         return offerList;
     }
 
     public WishList mapWishList(CreateExchangeRequestDTO requestDTO) {
         WishList wishList = modelMapper.map(requestDTO.getWish(), WishList.class);
         wishList.setAddress(addressMapper.map(requestDTO.getAddress()));
-        wishList.setUser(accountMapper.map(requestDTO.getWish().getUserId()));
-        UserList wishListOfCategories = categoryMapper.mapToList(
-            requestDTO.getWishCategoriesIds(), TypeList.WISH_LIST
-        );
-        wishList.setUserLists(List.of(wishListOfCategories));
+
+        List<UserList> userLists = new ArrayList<>();
+        userLists.add(
+            categoryMapper.mapToList(
+                requestDTO.getOffer().getOfferCategoriesIds(),
+                TypeList.WISH_LIST
+            ));
+        wishList.setUserLists(userLists);
+
         return wishList;
     }
 }

@@ -43,4 +43,6 @@ public class ExchangeList extends AbstractEntity {
     @Schema(description = "Когда запись добавляется = false." +
         " После того, как второй участник подтвердит = true.")
     private Boolean isBoth;
+    @Schema(description = "Полное совпадение")
+    private Boolean isFullMatch;
 }

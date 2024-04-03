@@ -2,12 +2,14 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.pishemzapuskayem.backendbookservice.events.UserLoggedInEvent;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.mapper.AccountMapper;
 import ru.pishemzapuskayem.backendbookservice.model.dto.AccountDTO;
@@ -27,6 +29,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final AuthService authService;
     private final JwtUtil jwtUtil;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${jwt.tokenExpiresIn}")
     private int tokenExpiresIn;
@@ -66,6 +69,8 @@ public class AuthController {
                 account.getRole().getName(),
                 tokenExpiresIn
         );
+
+        eventPublisher.publishEvent(new UserLoggedInEvent(this));
 
         return ResponseEntity.ok(new AuthResponseDTO(
                 token,
