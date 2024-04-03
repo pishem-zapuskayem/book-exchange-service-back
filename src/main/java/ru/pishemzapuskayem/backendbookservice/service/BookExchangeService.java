@@ -19,6 +19,7 @@ import ru.pishemzapuskayem.backendbookservice.repository.WishListRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +64,6 @@ public class BookExchangeService {
         offerListRepository.save(offerList);
     }
 
-    //todo обновлять статусы на reserved или вовсе удалять ЗПК и ППК
     @Transactional
     public void createExchangeList(WishList wish, OfferList offer, boolean isFullMatch) {
         if (existsExchangeList(wish, offer)) {
@@ -81,6 +81,16 @@ public class BookExchangeService {
             .findFirst()
             .map(UserList::getWishList)
             .orElse(null);
+
+        wishListRepository.updateStatusByIds(
+            Status.RESERVED.getId(),
+            Set.of(wish.getId(), wishFromOffer.getId())
+        );
+
+        offerListRepository.updateStatusByIds(
+            Status.RESERVED.getId(),
+            Set.of(offer.getId(), offerFromWish.getId())
+        );
 
         ExchangeList exchangeList = new ExchangeList()
             .setFirstWishList(wish)
