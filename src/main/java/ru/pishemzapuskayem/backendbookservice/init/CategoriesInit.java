@@ -18,24 +18,71 @@ public class CategoriesInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Category genre = new Category()
-            .setName("Жанр")
-            .setMultiselect(true);
-        genre = service.createCategory(genre);
-        List<Category> categories = List.of(
-            new Category()
-                .setName("Фэнтези")
-                .setParent(genre),
-            new Category()
-                .setName("Научная фантастика")
-                .setParent(genre),
-            new Category()
-                .setName("Ужасы")
-                .setParent(genre)
-        );
-        for (var category : categories) {
-            service.createCategory(category);
+        List<Category> parentList = initCategoryParent();
+        for (var item : parentList) {
+            item.setId(service.createCategory(item).getId());
+        }
+        List<Category> childList = initCategoryChild(parentList);
+        for (var childItem : childList) {
+            service.createCategory(childItem);
         }
         log.info("Категории добавлены");
+    }
+
+    private List<Category> initCategoryParent() {
+        return List.of(
+                new Category().setName("жанр").setMultiselect(true),
+                new Category().setName("область науки").setMultiselect(false),
+                new Category().setName("состояние").setMultiselect(false),
+                new Category().setName("обложка").setMultiselect(false),
+                new Category().setName("лауреат").setMultiselect(false),
+                new Category().setName("экранизация").setMultiselect(false),
+                new Category().setName("язык издания").setMultiselect(false)
+        );
+    }
+
+    private List<Category> initCategoryChild(List<Category> parentList) {
+        return List.of(
+                new Category().setName("ужасы").setParent(parentList.get(0)),
+                new Category().setName("детектив").setParent(parentList.get(0)),
+                new Category().setName("история").setParent(parentList.get(0)),
+                new Category().setName("мемуары").setParent(parentList.get(0)),
+                new Category().setName("приключения").setParent(parentList.get(0)),
+                new Category().setName("психология").setParent(parentList.get(0)),
+                new Category().setName("фантастика").setParent(parentList.get(0)),
+                new Category().setName("эзотерика").setParent(parentList.get(0)),
+
+                new Category().setName("религия и богословие").setParent(parentList.get(1)),
+                new Category().setName("философия и этика").setParent(parentList.get(1)),
+                new Category().setName("биология и этология").setParent(parentList.get(1)),
+                new Category().setName("социология").setParent(parentList.get(1)),
+                new Category().setName("психология").setParent(parentList.get(1)),
+                new Category().setName("наука").setParent(parentList.get(1)),
+                new Category().setName("искусство").setParent(parentList.get(1)),
+                new Category().setName("экономика").setParent(parentList.get(1)),
+                new Category().setName("юриспруденция").setParent(parentList.get(1)),
+
+                new Category().setName("отличное").setParent(parentList.get(2)),
+                new Category().setName("хорошее").setParent(parentList.get(2)),
+                new Category().setName("потертое").setParent(parentList.get(2)),
+                new Category().setName("плохое").setParent(parentList.get(2)),
+
+                new Category().setName("отличное").setParent(parentList.get(3)),
+                new Category().setName("хорошее").setParent(parentList.get(3)),
+                new Category().setName("потертое").setParent(parentList.get(3)),
+                new Category().setName("нет").setParent(parentList.get(3)),
+
+                new Category().setName("да").setParent(parentList.get(4)),
+                new Category().setName("нет").setParent(parentList.get(4)),
+
+                new Category().setName("да").setParent(parentList.get(5)),
+                new Category().setName("нет").setParent(parentList.get(5)),
+
+                new Category().setName("русский").setParent(parentList.get(5)),
+                new Category().setName("английский").setParent(parentList.get(5)),
+                new Category().setName("испанский").setParent(parentList.get(5)),
+                new Category().setName("японский").setParent(parentList.get(5)),
+                new Category().setName("китайский").setParent(parentList.get(5))
+        );
     }
 }
