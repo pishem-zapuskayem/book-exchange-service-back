@@ -3,6 +3,8 @@ package ru.pishemzapuskayem.backendbookservice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pishemzapuskayem.backendbookservice.dao.OfferListDAO;
+import ru.pishemzapuskayem.backendbookservice.dao.WishListDAO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.BookLiterary;
@@ -27,12 +29,13 @@ import java.util.Set;
 public class BookExchangeService {
     private final WishListRepository wishListRepository;
     private final OfferListRepository offerListRepository;
+    private final OfferListDAO offerListDAO;
     private final UserService userService;
     private final AddressService addressService;
     private final BookService bookService;
     private final AuthService authService;
-    private final ExchangeRepository exchangeRepository
-        ;
+    private final ExchangeRepository exchangeRepository;
+    private final WishListDAO wishListDAO;
 
     @Transactional
     public void createExchangeRequest(WishList wishList, OfferList offerList) {
@@ -51,14 +54,26 @@ public class BookExchangeService {
         AccountAddress addr = addressService.findOrCreateByIndex(wishList.getAddress());
         wishList.setAddress(addr);
 
-        BookLiterary bookLiterary = bookService.findOrCreateByIsbn(offerList.getBookLiterary());
-        offerList.setBookLiterary(bookLiterary);
         Account account = userService.getById(wishList.getUser().getId());
         wishList.setUser(account);
         offerList.setUser(account);
+
+        BookLiterary bookLiterary = bookService.findOrCreateByIsbn(offerList.getBookLiterary());
+        offerList.setBookLiterary(bookLiterary);
+        offerList.setIsbn(bookLiterary.getIsbn());
+        offerList.setYearPublishing(bookLiterary.getPublishYear());
+        offerList.setStatus(Status.NEW);
+        offerList.setCreatedAt(LocalDateTime.now());
+        offerList.getUserLists().forEach(
+            ul -> ul.setOfferList(offerList)
+        );
+
         wishList.setCreatedAt(LocalDateTime.now());
         wishList.setUpdatedAt(LocalDateTime.now());
         wishList.setStatus(Status.NEW);
+        wishList.getUserLists().forEach(
+            ul -> ul.setWishList(wishList)
+        );
 
         wishListRepository.save(wishList);
         offerListRepository.save(offerList);
@@ -105,11 +120,11 @@ public class BookExchangeService {
     }
 
     public List<WishList> findWishList(Status status){
-        return wishListRepository.findByStatus(status);
+        return wishListDAO.findWishListsByStatus(status.getId());
     }
 
     public List<OfferList> findOfferList(Status status) {
-        return offerListRepository.findByStatus(status);
+        return offerListDAO.findOfferListsByStatus(status.getId());
     }
 
     public boolean existsExchangeList(WishList wish, OfferList offer) {

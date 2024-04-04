@@ -40,7 +40,7 @@ public class AuthorController {
 
     @PostMapping
     public ResponseEntity<?> createAuthor(@RequestBody CreateAuthorRequestDTO request) {
-        authorService.create(authorMapper.map(request));
+        authorService.createAuthor(authorMapper.map(request));
         return ResponseEntity.ok().build();
     }
 }

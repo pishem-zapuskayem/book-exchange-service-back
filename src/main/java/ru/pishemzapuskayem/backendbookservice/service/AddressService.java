@@ -30,8 +30,8 @@ public class AddressService {
         Optional<AccountAddress> address = accountAddressRepository.findByAddrIndex(
             accountAddress.getAddrIndex()
         );
-        return address.orElse(
-            accountAddressRepository.save(accountAddress)
+        return address.orElseGet(
+            () -> createAddress(accountAddress)
         );
     }
 }

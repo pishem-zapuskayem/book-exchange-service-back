@@ -2,6 +2,7 @@ package ru.pishemzapuskayem.backendbookservice.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class BookMatchingService {
     private final BookExchangeService bookExchangeService;
@@ -35,19 +37,27 @@ public class BookMatchingService {
     @Async
     @EventListener
     public void handleUserLoggedIn(UserLoggedInEvent event) {
-        findMatchingOffers();
+        tryFindMatchingOffers();
     }
 
     @Async
     @EventListener
     public void handleMyExchangesViewed(MyExchangesViewedEvent event) {
-        findMatchingOffers();
+        tryFindMatchingOffers();
     }
 
     @Async
     @EventListener
     public void handleListUpdated(OffersUpdatedEvent event) {
-        findMatchingOffers();
+        tryFindMatchingOffers();
+    }
+
+    public void tryFindMatchingOffers() {
+        try {
+            findMatchingOffers();
+        } catch (Exception e) {
+            log.error("Cant find matching offers " + e);
+        }
     }
 
     //todo второй раунд проверка с другой стороны совпадения
@@ -58,6 +68,10 @@ public class BookMatchingService {
     public void findMatchingOffers() {
         List<WishList> wishes = bookExchangeService.findWishList(Status.NEW);
         List<OfferList> offers = bookExchangeService.findOfferList(Status.NEW);
+
+        if (wishes.isEmpty() || offers.isEmpty()) {
+            return;
+        }
 
         Map<Long, Set<OfferList>> mappedCategoryOffer = mapOffersByCategories(offers);
         Map<WishList, Set<Long>> mappedWishCategories = mapWishesByCategories(wishes);
