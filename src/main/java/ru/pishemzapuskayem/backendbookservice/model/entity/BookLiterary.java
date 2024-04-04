@@ -16,6 +16,11 @@ public class BookLiterary extends AbstractEntity {
     @Column(name = "booke_name", length = 50)
     private String bookName;
 
+    @Column(unique = true)
+    private String isbn;
+
+    private Integer publishYear;
+
     @Column(length = 50)
     private String note;
 

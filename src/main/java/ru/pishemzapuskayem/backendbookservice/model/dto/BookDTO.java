@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 public class BookDTO {
     private String bookName;
     private String note;
+    private String isbn;
+    private Integer publishYear;
     private AuthorDTO author;
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.pishemzapuskayem.backendbookservice.mapper.CategoryMapper;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CategoryResponseDTO;
+import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
 
 import java.util.List;
@@ -20,12 +21,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
 
-    @GetMapping("/list")
-    public ResponseEntity<List<CategoryResponseDTO>> getCategoryList() {
-        return ResponseEntity.ok(
-                categoryMapper.mapToList(
-                        categoryService.getCategoryList()
-                )
-        );
+    @GetMapping("/tree")
+    public ResponseEntity<List<Category>> getCategories() {
+        return ResponseEntity.ok(categoryService.getCategoryTree());
     }
 }
