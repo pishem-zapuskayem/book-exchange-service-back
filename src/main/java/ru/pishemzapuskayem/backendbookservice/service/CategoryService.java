@@ -7,11 +7,7 @@ import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.repository.CategoryRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,6 +15,12 @@ import java.util.Map;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+
+    @Transactional
+    public Category findOrCreate(Category category) {
+        Optional<Category> categoryOpt = categoryRepository.findByName(category.getName());
+        return categoryOpt.orElseGet(() -> createCategory(category));
+    }
 
     @Transactional
     public Category createCategory(Category category) {
