@@ -6,5 +6,5 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
 
 @Repository
 public interface ExchangeRepository extends JpaRepository<ExchangeList, Long> {
-    boolean existsByFirstWishListIdAndSecondOfferList(Long firstWishListId, Long secondOfferListId);
+    boolean existsByFirstWishListIdAndSecondOfferListId(Long firstWishList_id, Long secondOfferList);
 }

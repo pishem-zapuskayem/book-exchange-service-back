@@ -19,5 +19,5 @@ public interface WishListRepository extends JpaRepository<WishList, Long> {
 
     @Modifying
     @Query("UPDATE WishList e SET e.status = :status WHERE e.id IN :ids")
-    void updateStatusByIds(@Param("status") int status, @Param("listId") Set<Long> ids);
+    void updateStatusByIds(@Param("status") int status, @Param("ids") Set<Long> ids);
 }

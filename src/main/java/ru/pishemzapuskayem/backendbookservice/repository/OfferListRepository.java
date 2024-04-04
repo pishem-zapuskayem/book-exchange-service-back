@@ -19,5 +19,5 @@ public interface OfferListRepository extends JpaRepository<OfferList, Long> {
 
     @Modifying
     @Query("UPDATE OfferList e SET e.status = :status WHERE e.id IN :ids")
-    void updateStatusByIds(@Param("status") int status, @Param("listId") Set<Long> ids);
+    void updateStatusByIds(@Param("status") int status, @Param("ids") Set<Long> ids);
 }

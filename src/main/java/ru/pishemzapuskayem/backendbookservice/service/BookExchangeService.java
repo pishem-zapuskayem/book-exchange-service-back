@@ -113,6 +113,6 @@ public class BookExchangeService {
     }
 
     public boolean existsExchangeList(WishList wish, OfferList offer) {
-        return exchangeRepository.existsByFirstWishListIdAndSecondOfferList(wish.getId(), offer.getId());
+        return exchangeRepository.existsByFirstWishListIdAndSecondOfferListId(wish.getId(), offer.getId());
     }
 }
