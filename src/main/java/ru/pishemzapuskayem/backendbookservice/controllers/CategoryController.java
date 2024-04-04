@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.pishemzapuskayem.backendbookservice.mapper.CategoryMapper;
-import ru.pishemzapuskayem.backendbookservice.model.dto.CategoryResponseDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
 

@@ -1,5 +1,6 @@
 package ru.pishemzapuskayem.backendbookservice.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
@@ -23,6 +24,7 @@ public class Category extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
     private Category parent;
 
     @Schema(description = "По умолчанию false. Нужен для проверки по родительским вершинам для указания " +

@@ -20,11 +20,11 @@ public class CategoriesInit implements CommandLineRunner {
     public void run(String... args) {
         List<Category> parentList = initCategoryParent();
         for (var item : parentList) {
-            item.setId(service.createCategory(item).getId());
+            item.setId(service.findOrCreate(item).getId());
         }
         List<Category> childList = initCategoryChild(parentList);
         for (var childItem : childList) {
-            service.createCategory(childItem);
+            service.findOrCreate(childItem);
         }
         log.info("Категории добавлены");
     }
@@ -78,11 +78,11 @@ public class CategoriesInit implements CommandLineRunner {
                 new Category().setName("да").setParent(parentList.get(5)),
                 new Category().setName("нет").setParent(parentList.get(5)),
 
-                new Category().setName("русский").setParent(parentList.get(5)),
-                new Category().setName("английский").setParent(parentList.get(5)),
-                new Category().setName("испанский").setParent(parentList.get(5)),
-                new Category().setName("японский").setParent(parentList.get(5)),
-                new Category().setName("китайский").setParent(parentList.get(5))
+                new Category().setName("русский").setParent(parentList.get(6)),
+                new Category().setName("английский").setParent(parentList.get(6)),
+                new Category().setName("испанский").setParent(parentList.get(6)),
+                new Category().setName("японский").setParent(parentList.get(6)),
+                new Category().setName("китайский").setParent(parentList.get(6))
         );
     }
 }
