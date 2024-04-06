@@ -36,4 +36,9 @@ public class OfferList extends AbstractEntity {
     private Status status;
     @OneToMany
     private List<UserList> userLists;
+
+    public OfferList setId(Long id) {
+        super.setId(id);
+        return this;
+    }
 }

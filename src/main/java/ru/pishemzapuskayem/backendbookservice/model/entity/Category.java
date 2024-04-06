@@ -34,4 +34,15 @@ public class Category extends AbstractEntity {
     @Schema(description = "Используется для построения дерева категорий")
     @Transient
     private Set<Category> children;
+
+    public Category setId(Long id) {
+        super.setId(id);
+        return this;
+    }
+
+    public Category setParentId(long parentId) {
+        parent = new Category()
+            .setId(parentId);
+        return this;
+    }
 }

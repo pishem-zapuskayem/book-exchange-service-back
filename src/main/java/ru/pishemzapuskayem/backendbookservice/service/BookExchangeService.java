@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.dao.OfferListDAO;
 import ru.pishemzapuskayem.backendbookservice.dao.WishListDAO;
+import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.BookLiterary;
@@ -16,11 +17,13 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 import ru.pishemzapuskayem.backendbookservice.repository.ExchangeRepository;
 import ru.pishemzapuskayem.backendbookservice.repository.OfferListRepository;
+import ru.pishemzapuskayem.backendbookservice.repository.UserListRepository;
 import ru.pishemzapuskayem.backendbookservice.repository.WishListRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -36,6 +39,7 @@ public class BookExchangeService {
     private final AuthService authService;
     private final ExchangeRepository exchangeRepository;
     private final WishListDAO wishListDAO;
+    private final UserListRepository userListRepository;
 
     @Transactional
     public void createExchangeRequest(WishList wishList, OfferList offerList) {
@@ -88,14 +92,22 @@ public class BookExchangeService {
         OfferList offerFromWish = wish.getUserLists().stream()
             .filter(ul -> ul.getListType() == TypeList.OFFER_LIST)
             .findFirst()
-            .map(UserList::getOfferList)
+            .map(ul -> findOfferList(ul.getId()))
             .orElse(null);
+
+        if (Objects.equals(offer.getId(), offerFromWish.getId())) {
+            return;
+        }
 
         WishList wishFromOffer = offer.getUserLists().stream()
             .filter(ul -> ul.getListType() == TypeList.WISH_LIST)
             .findFirst()
-            .map(UserList::getWishList)
+            .map(ul -> findWishList(ul.getId()))
             .orElse(null);
+
+        if (Objects.equals(wish.getId(), wishFromOffer.getId())) {
+            return;
+        }
 
         wishListRepository.updateStatusByIds(
             Status.RESERVED.getId(),
@@ -123,8 +135,28 @@ public class BookExchangeService {
         return wishListDAO.findWishListsByStatus(status.getId());
     }
 
+    public WishList findWishList(Long userListId){
+        UserList ul = userListRepository.findById(userListId).orElseThrow(
+            () -> new ApiException("user list not found")
+        );
+        if (ul.getListType() == TypeList.OFFER_LIST) {
+            throw new ApiException("invalid OFFER_LIST type");
+        }
+        return ul.getWishList();
+    }
+
     public List<OfferList> findOfferList(Status status) {
         return offerListDAO.findOfferListsByStatus(status.getId());
+    }
+
+    public OfferList findOfferList(Long userListId) {
+        UserList ul = userListRepository.findById(userListId).orElseThrow(
+            () -> new ApiException("user list not found")
+        );
+        if (ul.getListType() == TypeList.WISH_LIST) {
+            throw new ApiException("invalid WISH_LIST type");
+        }
+        return ul.getOfferList();
     }
 
     public boolean existsExchangeList(WishList wish, OfferList offer) {

@@ -38,4 +38,9 @@ public class WishList extends AbstractEntity {
     private AccountAddress address;
     @OneToMany(cascade = {CascadeType.PERSIST})
     private List<UserList> userLists;
+
+    public WishList setId(Long id) {
+        super.setId(id);
+        return this;
+    }
 }

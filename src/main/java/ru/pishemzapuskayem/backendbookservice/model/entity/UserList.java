@@ -28,4 +28,9 @@ public class UserList extends AbstractEntity {
     private OfferList offerList;
     @OneToMany(cascade = {CascadeType.PERSIST})
     private List<UserValueCategory> categories;
+
+    public UserList setId(Long id) {
+        super.setId(id);
+        return this;
+    }
 }

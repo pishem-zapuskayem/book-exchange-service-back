@@ -20,4 +20,9 @@ public class UserValueCategory extends AbstractEntity {
     @ManyToOne
     @JoinColumn
     private Category category;
+
+    public UserValueCategory setId(Long id) {
+        super.setId(id);
+        return this;
+    }
 }

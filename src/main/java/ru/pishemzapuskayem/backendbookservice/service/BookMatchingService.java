@@ -37,6 +37,7 @@ public class BookMatchingService {
     @Async
     @EventListener
     public void handleUserLoggedIn(UserLoggedInEvent event) {
+        // todo точно асинхронно выполняется?
         tryFindMatchingOffers();
     }
 
@@ -85,7 +86,9 @@ public class BookMatchingService {
 
             for (var catId : wishCategoryIds) {
                 if (mappedCategoryOffer.containsKey(catId)) {
-                    potentialMatches.addAll(mappedCategoryOffer.get(catId));
+                    potentialMatches.addAll(mappedCategoryOffer.get(catId).stream()
+                        .filter(offer -> !offer.getUser().getId().equals(wish.getUser().getId()))
+                        .collect(Collectors.toSet()));
                 }
             }
 
@@ -134,7 +137,7 @@ public class BookMatchingService {
         for (WishList wish : wishes) {
             Set<Long> categoryIds = wish.getUserLists().stream()
                 .flatMap(ul -> ul.getCategories().stream())
-                .map(AbstractEntity::getId)
+                .map(uvc -> uvc.getCategory().getId())
                 .collect(Collectors.toSet());
             map.put(wish, categoryIds);
         }
