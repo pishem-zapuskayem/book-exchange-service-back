@@ -14,8 +14,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class WishListService {
-    private WishListRepository wishListRepository;
-    private AuthService authService;
+    private final WishListRepository wishListRepository;
+    private final AuthService authService;
 
     public List<WishList> getWishList() {
         Account account = authService.getAuthenticated();
