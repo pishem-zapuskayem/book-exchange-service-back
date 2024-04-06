@@ -139,15 +139,13 @@ public class BookExchangeService {
         return exchangeRepository.existsByFirstWishListIdAndSecondOfferListId(wish.getId(), offer.getId());
     }
     //TODO c обоих сторон но всрато
-    public List<?> getListExchange() {
+    public List<ExchangeList> getListExchange() {
         Account account = authService.getAuthenticated();
         List<ExchangeList> exchangeLists = new ArrayList<>();
         var listExchange = exchangeRepository.findByFirstOfferListUser(account);
         exchangeLists.addAll(listExchange);
         var listExchange1 = exchangeRepository.findBySecondOfferListUser(account);
         exchangeLists.addAll(listExchange1);
-
-
         return listExchange;
     }
 }
