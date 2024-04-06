@@ -39,6 +39,6 @@ public class OfferListController {
                     )
             );
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(offerListDTOS);
     }
 }

@@ -8,6 +8,7 @@ import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 import ru.pishemzapuskayem.backendbookservice.repository.CategoryRepository;
 
 import java.util.*;
@@ -78,5 +79,13 @@ public class CategoryService {
         }
 
         return rootCategories;
+    }
+
+    public List<Category> extractTree(WishList wish) {
+        return wish.getUserLists().stream()
+                .filter(ul -> ul.getListType() == TypeList.WISH_LIST)
+                .flatMap(ul -> ul.getCategories().stream())
+                .map(uc -> uc.getCategory())
+                .collect(Collectors.toList());
     }
 }
