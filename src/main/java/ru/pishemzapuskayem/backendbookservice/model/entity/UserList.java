@@ -20,12 +20,15 @@ import java.util.List;
 public class UserList extends AbstractEntity {
     @Enumerated(EnumType.ORDINAL)
     private TypeList listType;
+
     @ManyToOne
     @JoinColumn(name = "wishListId", referencedColumnName = "id")
     private WishList wishList;
+
     @ManyToOne
     @JoinColumn(name = "offerListId", referencedColumnName = "id")
     private OfferList offerList;
+
     @OneToMany(cascade = {CascadeType.PERSIST})
     private List<UserValueCategory> categories;
 

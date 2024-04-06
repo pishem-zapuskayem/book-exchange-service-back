@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.dao.OfferListDAO;
 import ru.pishemzapuskayem.backendbookservice.dao.WishListDAO;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
+import ru.pishemzapuskayem.backendbookservice.model.Pair;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.BookLiterary;
@@ -84,46 +85,22 @@ public class BookExchangeService {
     }
 
     @Transactional
-    public void createExchangeList(WishList wish, OfferList offer, boolean isFullMatch) {
-        if (existsExchangeList(wish, offer)) {
-            return;
-        }
-
-        OfferList offerFromWish = wish.getUserLists().stream()
-            .filter(ul -> ul.getListType() == TypeList.OFFER_LIST)
-            .findFirst()
-            .map(ul -> findOfferList(ul.getId()))
-            .orElse(null);
-
-        if (Objects.equals(offer.getId(), offerFromWish.getId())) {
-            return;
-        }
-
-        WishList wishFromOffer = offer.getUserLists().stream()
-            .filter(ul -> ul.getListType() == TypeList.WISH_LIST)
-            .findFirst()
-            .map(ul -> findWishList(ul.getId()))
-            .orElse(null);
-
-        if (Objects.equals(wish.getId(), wishFromOffer.getId())) {
-            return;
-        }
-
+    public void createExchangeList(Pair<WishList, OfferList> firstPair, Pair<WishList, OfferList> secondPair, boolean isFullMatch) {
         wishListRepository.updateStatusByIds(
             Status.RESERVED.getId(),
-            Set.of(wish.getId(), wishFromOffer.getId())
+            Set.of(firstPair.getFirst().getId(), secondPair.getFirst().getId())
         );
 
         offerListRepository.updateStatusByIds(
             Status.RESERVED.getId(),
-            Set.of(offer.getId(), offerFromWish.getId())
+            Set.of(firstPair.getSecond().getId(), secondPair.getSecond().getId())
         );
 
         ExchangeList exchangeList = new ExchangeList()
-            .setFirstWishList(wish)
-            .setFirstOfferList(offerFromWish)
-            .setSecondOfferList(offer)
-            .setSecondWishList(wishFromOffer)
+            .setFirstWishList(firstPair.getFirst())
+            .setFirstOfferList(firstPair.getSecond())
+            .setSecondWishList(secondPair.getFirst())
+            .setSecondOfferList(secondPair.getSecond())
             .setCreatedAt(LocalDateTime.now())
             .setIsBoth(false)
             .setIsFullMatch(isFullMatch);
