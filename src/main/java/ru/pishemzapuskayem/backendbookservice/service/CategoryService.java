@@ -1,13 +1,17 @@
 package ru.pishemzapuskayem.backendbookservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.type.ListType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
+import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
 import ru.pishemzapuskayem.backendbookservice.repository.CategoryRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,6 +37,15 @@ public class CategoryService {
             category.setParent(parent);
         }
         return categoryRepository.save(category);
+    }
+
+    //TODO не делаем дерево
+    public List<Category> extractTree(OfferList offerList) {
+        return offerList.getUserLists().stream()
+                .filter(ul -> ul.getListType() == TypeList.OFFER_LIST)
+                .flatMap(ul -> ul.getCategories().stream())
+                .map(uc -> uc.getCategory())
+                .collect(Collectors.toList());
     }
 
     public Category getById(Long id) {
