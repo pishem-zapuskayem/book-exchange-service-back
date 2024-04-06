@@ -18,13 +18,15 @@ public class CategoriesInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<Category> parentList = initCategoryParent();
-        for (var item : parentList) {
-            item.setId(service.findOrCreate(item).getId());
-        }
-        List<Category> childList = initCategoryChild(parentList);
-        for (var childItem : childList) {
-            service.findOrCreate(childItem);
+        if (service.checkFullCategory()) {
+            List<Category> parentList = initCategoryParent();
+            for (var item : parentList) {
+                item.setId(service.findOrCreate(item).getId());
+            }
+            List<Category> childList = initCategoryChild(parentList);
+            for (var childItem : childList) {
+                service.findOrCreate(childItem);
+            }
         }
         log.info("Категории добавлены");
     }
