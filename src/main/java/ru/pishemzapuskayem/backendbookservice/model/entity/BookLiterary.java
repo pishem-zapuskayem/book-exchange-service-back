@@ -27,4 +27,9 @@ public class BookLiterary extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "idAuthor", referencedColumnName = "id")
     private Author author;
+
+    public BookLiterary setId(Long id) {
+        super.setId(id);
+        return this;
+    }
 }

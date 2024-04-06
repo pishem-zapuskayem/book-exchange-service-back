@@ -3,11 +3,13 @@ package ru.pishemzapuskayem.backendbookservice.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "account_address")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class AccountAddress extends AbstractEntity {
 
     @ManyToOne
@@ -27,4 +29,9 @@ public class AccountAddress extends AbstractEntity {
     private String addrApart;
     @Column(name = "is_default")
     private Boolean isDefault;
+
+    public AccountAddress setId(Long id) {
+        super.setId(id);
+        return this;
+    }
 }

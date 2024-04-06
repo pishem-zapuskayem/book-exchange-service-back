@@ -10,14 +10,12 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Repository
 public interface OfferListRepository extends JpaRepository<OfferList, Long> {
-    @EntityGraph(attributePaths = {"userLists", "userLists.categories"})
-    List<OfferList> findByStatus(Status status);
-
     @Modifying
-    @Query("UPDATE OfferList e SET e.status = :status WHERE e.id IN :ids")
-    void updateStatusByIds(@Param("status") int status, @Param("ids") Set<Long> ids);
+    @Query(value = "UPDATE offer_list SET status = :status WHERE id IN :ids", nativeQuery = true)
+    void updateStatusByIds(@Param("status") Integer status, @Param("ids") Set<Long> ids);
 }

@@ -6,12 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Status {
-    NEW(1, "Новый"),
-    CLOSED(2, "Закрыто"),
-    IN_WORK(3, "В работе"),
-    AWAITING(4, "Ожидает подтверждения"),
-    FREE(5, "Свободен"),
-    RESERVED(6, "Участвует в обмене");
+    NEW(0, "Новый"),
+    CLOSED(1, "Закрыто"),
+    IN_WORK(2, "В работе"),
+    AWAITING(3, "Ожидает подтверждения"),
+    FREE(4, "Свободен"),
+    RESERVED(5, "Участвует в обмене");
 
     private final int id;
     private final String name;

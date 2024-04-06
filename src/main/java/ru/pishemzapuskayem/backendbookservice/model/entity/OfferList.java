@@ -29,11 +29,16 @@ public class OfferList extends AbstractEntity {
     @JoinColumn(name = "idUser", referencedColumnName = "id")
     private Account user;
     private String isbn;
-    private LocalDate yearPublishing;
+    private Integer yearPublishing;
     private LocalDateTime createdAt;
     @Schema(description = "состояние участия в обмене: свободен, отобран и т.п.")
     @Enumerated(EnumType.ORDINAL)
     private Status status;
     @OneToMany
     private List<UserList> userLists;
+
+    public OfferList setId(Long id) {
+        super.setId(id);
+        return this;
+    }
 }

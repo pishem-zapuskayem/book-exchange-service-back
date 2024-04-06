@@ -26,10 +26,10 @@ public class BookService {
     }
 
     @Transactional
-    public void create(BookLiterary book) {
-        Author author = authorService.getById(book.getAuthor().getId());
+    public BookLiterary createBook(BookLiterary book) {
+        Author author = authorService.findOrCreateAuthor(book.getAuthor());
         book.setAuthor(author);
-        bookRepository.save(book);
+        return bookRepository.save(book);
     }
 
     public List<BookLiterary> getBooks() {
@@ -42,8 +42,8 @@ public class BookService {
             throw new ApiException("isbn_is_empty");
         }
         Optional<BookLiterary> book = bookRepository.findByIsbn(bookLiterary.getIsbn());
-        return book.orElse(
-          bookRepository.save(bookLiterary)
+        return book.orElseGet(
+            () -> createBook(bookLiterary)
         );
     }
 }

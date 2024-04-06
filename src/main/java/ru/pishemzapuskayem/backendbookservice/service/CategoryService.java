@@ -16,6 +16,10 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    public Boolean checkFullCategory() {
+        return categoryRepository.findAll().isEmpty();
+    }
+
     @Transactional
     public Category findOrCreate(Category category) {
         Optional<Category> categoryOpt = categoryRepository.findByName(category.getName());

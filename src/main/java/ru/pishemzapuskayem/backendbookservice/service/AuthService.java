@@ -9,6 +9,8 @@ import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.security.UserDetailsImpl;
 
+import java.security.Principal;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,8 +21,9 @@ public class AuthService {
     private EntityManager entityManager;
 
     public Optional<Account> tryGetAuthenticated() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
-            .getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal == null || principal.equals("anonymousUser")) return Optional.empty();
+        UserDetailsImpl userDetails = (UserDetailsImpl) principal;
         Account detachedAccount = userDetails.getUser();
         return Optional.ofNullable(entityManager.find(Account.class, detachedAccount.getId()));
     }

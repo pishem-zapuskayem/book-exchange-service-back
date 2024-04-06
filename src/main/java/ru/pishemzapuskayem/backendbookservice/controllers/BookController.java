@@ -40,7 +40,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<?> createBook(@RequestBody CreateBookRequestDTO request) {
-        bookService.create(bookMapper.map(request));
+        bookService.createBook(bookMapper.map(request));
         return ResponseEntity.ok().build();
     }
 }

@@ -14,10 +14,7 @@ import java.util.Set;
 
 @Repository
 public interface WishListRepository extends JpaRepository<WishList, Long> {
-    @EntityGraph(attributePaths = {"userLists", "userLists.categories"})
-    List<WishList> findByStatus(Status status);
-
     @Modifying
-    @Query("UPDATE WishList e SET e.status = :status WHERE e.id IN :ids")
-    void updateStatusByIds(@Param("status") int status, @Param("ids") Set<Long> ids);
+    @Query(value = "UPDATE wish_list SET status = :status WHERE id IN(:ids)", nativeQuery = true)
+    void updateStatusByIds(@Param("status") Integer status, @Param("ids") Set<Long> ids);
 }

@@ -61,7 +61,7 @@ public class AuthController {
         Account account = ((UserDetailsImpl)authentication.getPrincipal()).getUser();
 
         if (Boolean.FALSE.equals(account.getEnable())){
-            throw new ApiException("Ваш аккунт неактивированный");
+            throw new ApiException("Ваш аккаунт неактивирован");
         }
 
         String token = jwtUtil.generateToken(
