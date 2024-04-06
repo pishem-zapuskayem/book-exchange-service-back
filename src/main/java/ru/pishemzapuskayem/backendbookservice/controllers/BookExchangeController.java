@@ -3,10 +3,7 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookExchangeMapper;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
@@ -29,5 +26,11 @@ public class BookExchangeController {
         bookExchangeService.createExchangeRequest(wishList, offerList);
         eventPublisher.publishEvent(new OffersUpdatedEvent(this));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getListExchangeRequest() {
+        var exchange = bookExchangeService.getListExchange();
+
     }
 }

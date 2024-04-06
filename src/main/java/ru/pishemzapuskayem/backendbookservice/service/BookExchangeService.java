@@ -24,7 +24,6 @@ import ru.pishemzapuskayem.backendbookservice.repository.WishListRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -138,5 +137,17 @@ public class BookExchangeService {
 
     public boolean existsExchangeList(WishList wish, OfferList offer) {
         return exchangeRepository.existsByFirstWishListIdAndSecondOfferListId(wish.getId(), offer.getId());
+    }
+    //TODO c обоих сторон но всрато
+    public List<?> getListExchange() {
+        Account account = authService.getAuthenticated();
+        List<ExchangeList> exchangeLists = new ArrayList<>();
+        var listExchange = exchangeRepository.findByFirstOfferListUser(account);
+        exchangeLists.addAll(listExchange);
+        var listExchange1 = exchangeRepository.findBySecondOfferListUser(account);
+        exchangeLists.addAll(listExchange1);
+
+
+        return listExchange;
     }
 }
