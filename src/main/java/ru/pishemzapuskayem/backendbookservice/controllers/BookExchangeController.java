@@ -55,7 +55,6 @@ public class BookExchangeController {
         return ResponseEntity.ok(dtos);
     }
 
-    @Secured({"USER", "ADMIN"})
     @PostMapping("/enter")
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<Void> enterExchange(@RequestParam Long exchangeId) {
@@ -66,7 +65,6 @@ public class BookExchangeController {
         return ResponseEntity.ok().build();
     }
 
-    @Secured({"USER", "ADMIN"})
     @PostMapping("/mark-as-received")
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void markReceived(@RequestParam Long exchangeId) {
@@ -74,7 +72,6 @@ public class BookExchangeController {
         bookExchangeService.tryArchive(exchangeId);
     }
 
-    @Secured({"USER", "ADMIN"})
     @PostMapping("/set-delivery-number")
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void markReceived(
