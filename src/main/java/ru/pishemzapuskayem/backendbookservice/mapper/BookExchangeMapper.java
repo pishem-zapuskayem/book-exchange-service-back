@@ -42,7 +42,7 @@ public class BookExchangeMapper {
         List<UserList> userLists = new ArrayList<>();
         userLists.add(
             categoryMapper.mapToList(
-                requestDTO.getOffer().getOfferCategoriesIds(),
+                requestDTO.getWish().getWishCategoriesIds(),
                 TypeList.WISH_LIST
             ));
         wishList.setUserLists(userLists);

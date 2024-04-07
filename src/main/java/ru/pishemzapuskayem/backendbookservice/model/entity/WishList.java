@@ -1,7 +1,6 @@
 package ru.pishemzapuskayem.backendbookservice.model.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,7 +35,7 @@ public class WishList extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "idUserAddress", referencedColumnName = "id", nullable = false)
     private AccountAddress address;
-    @OneToMany(cascade = {CascadeType.PERSIST})
+    @OneToMany
     private List<UserList> userLists;
 
     public WishList setId(Long id) {

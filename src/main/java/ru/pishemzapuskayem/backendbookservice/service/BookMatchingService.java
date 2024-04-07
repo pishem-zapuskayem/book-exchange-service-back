@@ -5,16 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.events.MyExchangesViewedEvent;
 import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
 import ru.pishemzapuskayem.backendbookservice.events.UserLoggedInEvent;
 import ru.pishemzapuskayem.backendbookservice.model.Pair;
-import ru.pishemzapuskayem.backendbookservice.model.entity.AbstractEntity;
-import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
@@ -28,7 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,7 +71,7 @@ public class BookMatchingService {
         if (allPairs.isEmpty() || allPairs.size() == 1) {
             return;
         }
-        Set<String> checkedPairKeys = new HashSet<>();
+        Set<String> createdExchangePairs = new HashSet<>();
         //todo оптимизация категоризации
         for (Pair<WishList, OfferList> pair : allPairs) {
             WishList wish = pair.getFirst();
@@ -87,8 +82,8 @@ public class BookMatchingService {
             //todo на будущее делать через мапы
             for (Pair<WishList, OfferList> otherPair : allPairs) {
                 if (pair.equals(otherPair)) continue;
-                String pairKey = new Pair<>(pair, otherPair).generatePairKey();
-                if (checkedPairKeys.contains(pairKey)) continue;
+                String pairKey = Pair.generatePairKey(new Pair<>(pair, otherPair));
+                if (createdExchangePairs.contains(pairKey)) continue;
 
                 WishList otherWish = otherPair.getFirst();
                 OfferList otherOffer = otherPair.getSecond();
@@ -102,7 +97,7 @@ public class BookMatchingService {
 
                 if (fullMatch || partialMatch) {
                     bookExchangeService.createExchangeList(pair, otherPair, fullMatch);
-                    checkedPairKeys.add(pairKey);
+                    createdExchangePairs.add(pairKey);
                 }
             }
         }
