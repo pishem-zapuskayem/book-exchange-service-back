@@ -5,7 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 
@@ -28,7 +28,7 @@ public class BookExchangeMapper {
         userLists.add(
             categoryMapper.mapToList(
             requestDTO.getOffer().getOfferCategoriesIds(),
-            TypeList.OFFER_LIST
+            ListType.OFFER_LIST
         ));
         offerList.setUserLists(userLists);
 
@@ -43,7 +43,7 @@ public class BookExchangeMapper {
         userLists.add(
             categoryMapper.mapToList(
                 requestDTO.getWish().getWishCategoriesIds(),
-                TypeList.WISH_LIST
+                ListType.WISH_LIST
             ));
         wishList.setUserLists(userLists);
 

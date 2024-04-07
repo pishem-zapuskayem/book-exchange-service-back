@@ -7,7 +7,7 @@ import ru.pishemzapuskayem.backendbookservice.model.dto.CategoryDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CategoryResponseDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.ChildCategoryResponseDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
-import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserValueCategory;
 
@@ -20,8 +20,8 @@ public class CategoryMapper {
 
     private final ModelMapper modelMapper;
 
-    public UserList mapToList(Set<Long> wishCategoriesIds, TypeList typeList) {
-        UserList listOfCategories = new UserList().setListType(typeList);
+    public UserList mapToList(Set<Long> wishCategoriesIds, ListType listType) {
+        UserList listOfCategories = new UserList().setListType(listType);
         List<Category> categories = map(wishCategoriesIds);
         List<UserValueCategory> userValueCategories = categories.stream().map(
                 category -> new UserValueCategory()

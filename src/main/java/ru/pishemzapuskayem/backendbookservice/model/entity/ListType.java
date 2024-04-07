@@ -5,14 +5,14 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum TypeList {
+public enum ListType {
     OFFER_LIST(0),
     WISH_LIST(1);
 
     private final int id;
 
-    public static TypeList byId(int id) {
-        for (TypeList type : values()) {
+    public static ListType byId(int id) {
+        for (ListType type : values()) {
             if (type.id == id) {
                 return type;
             }
