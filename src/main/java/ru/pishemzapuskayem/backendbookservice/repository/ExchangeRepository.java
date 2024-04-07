@@ -14,6 +14,7 @@ import java.util.List;
 public interface ExchangeRepository extends JpaRepository<ExchangeList, Long> {
     boolean existsByFirstWishListIdAndSecondOfferListId(Long firstWishList_id, Long secondOfferList);
 
+    @Query("SELECT e FROM ExchangeList e WHERE e.firstOfferList.user = :user OR e.secondOfferList.user = :user")
     List<ExchangeList> findByFirstOfferListUserOrSecondOfferListUser(Account user);
 
     @Modifying
