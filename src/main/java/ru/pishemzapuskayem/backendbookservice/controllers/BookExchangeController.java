@@ -30,7 +30,7 @@ public class BookExchangeController {
     private final BookMapper bookMapper;
 
     @PostMapping
-    private ResponseEntity<?> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
+    public ResponseEntity<?> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
         WishList wishList = bookExchangeMapper.mapWishList(dto);
         OfferList offerList = bookExchangeMapper.mapOfferList(dto);
         bookExchangeService.createExchangeRequest(wishList, offerList);
@@ -57,6 +57,7 @@ public class BookExchangeController {
 
     @Secured({"USER", "ADMIN"})
     @PostMapping("/enter")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<Void> enterExchange(@RequestParam Long exchangeId) {
         ExchangeList exchange = bookExchangeService.enterExchange(exchangeId);
         if (exchange.isBothAgreed()) {
@@ -67,6 +68,7 @@ public class BookExchangeController {
 
     @Secured({"USER", "ADMIN"})
     @PostMapping("/mark-as-received")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void markReceived(@RequestParam Long exchangeId) {
         bookExchangeService.markAsReceived(exchangeId);
         bookExchangeService.tryArchive(exchangeId);
@@ -74,6 +76,7 @@ public class BookExchangeController {
 
     @Secured({"USER", "ADMIN"})
     @PostMapping("/set-delivery-number")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void markReceived(
         @RequestParam Long exchangeId,
         @RequestBody UpdateExchangeDeliveryRequestDTO deliveryRequestDTO
