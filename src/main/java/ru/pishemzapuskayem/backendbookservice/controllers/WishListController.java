@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.pishemzapuskayem.backendbookservice.mapper.AccountAddressMapper;
-import ru.pishemzapuskayem.backendbookservice.mapper.BookMapper;
 import ru.pishemzapuskayem.backendbookservice.model.dto.WishListDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
@@ -27,11 +26,11 @@ public class WishListController {
     public ResponseEntity<?> getWishList() {
         List<WishList> wishList = wishListService.getWishList();
         List<WishListDTO> wishListDTOS = new ArrayList<>();
-        for (var wish: wishList) {
+        for (var wish : wishList) {
             wishListDTOS.add(
                 new WishListDTO(
-                        categoryService.extractTree(wish),
-                        accountAddressMapper.map(wish.getAddress())
+                    categoryService.extractTree(wish),
+                    accountAddressMapper.map(wish.getAddress())
                 )
             );
         }
