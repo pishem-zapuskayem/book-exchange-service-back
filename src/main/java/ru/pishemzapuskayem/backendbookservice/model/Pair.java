@@ -8,18 +8,10 @@ import java.util.Objects;
 public class Pair<T, T2> {
     private final T first;
     private final T2 second;
-    private final String pairKey;
 
     public Pair(T first, T2 second) {
         this.first = first;
         this.second = second;
-        this.pairKey = generatePairKey();
-    }
-
-    public String generatePairKey() {
-        int hash1 = first.hashCode();
-        int hash2 = second.hashCode();
-        return hash1 < hash2 ? hash1 + ":" + hash2 : hash2 + ":" + hash1;
     }
 
     @Override
@@ -34,5 +26,11 @@ public class Pair<T, T2> {
     @Override
     public int hashCode() {
         return Objects.hash(first, second);
+    }
+
+    public static String generatePairKey(Pair<?, ?> pair) {
+        int hash1 = pair.getFirst().hashCode();
+        int hash2 = pair.getSecond().hashCode();
+        return hash1 < hash2 ? hash1 + ":" + hash2 : hash2 + ":" + hash1;
     }
 }

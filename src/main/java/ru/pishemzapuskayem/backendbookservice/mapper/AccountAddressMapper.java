@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.pishemzapuskayem.backendbookservice.model.dto.AccountAddressDTO;
+import ru.pishemzapuskayem.backendbookservice.model.dto.AccountDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 
 import java.util.ArrayList;
@@ -26,5 +27,9 @@ public class AccountAddressMapper {
         }
 
         return accountAddresses;
+    }
+
+    public AccountDTO map(AccountAddress address) {
+        return modelMapper.map(address, AccountDTO.class);
     }
 }

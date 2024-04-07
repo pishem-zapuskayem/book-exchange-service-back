@@ -7,6 +7,9 @@ import ru.pishemzapuskayem.backendbookservice.model.dto.BookDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CreateBookRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.BookLiterary;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class BookMapper {
@@ -41,5 +44,13 @@ public class BookMapper {
     public BookLiterary map(Long bookLiteraryId){
         return (BookLiterary) new BookLiterary()
                 .setId(bookLiteraryId);
+    }
+
+    public List<BookDTO> map(List<BookLiterary> offerListAccount) {
+        List<BookDTO> bookDTOS = new ArrayList<>();
+        for (var offer: offerListAccount) {
+            bookDTOS.add(map(offer));
+        }
+        return bookDTOS;
     }
 }

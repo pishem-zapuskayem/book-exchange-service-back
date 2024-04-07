@@ -1,10 +1,13 @@
 package ru.pishemzapuskayem.backendbookservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.dao.OfferListDAO;
 import ru.pishemzapuskayem.backendbookservice.dao.WishListDAO;
+import ru.pishemzapuskayem.backendbookservice.events.MyExchangesViewedEvent;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.Pair;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
@@ -24,12 +27,12 @@ import ru.pishemzapuskayem.backendbookservice.repository.WishListRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class BookExchangeService {
     private final WishListRepository wishListRepository;
     private final OfferListRepository offerListRepository;
@@ -41,16 +44,10 @@ public class BookExchangeService {
     private final ExchangeRepository exchangeRepository;
     private final WishListDAO wishListDAO;
     private final UserListRepository userListRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void createExchangeRequest(WishList wishList, OfferList offerList) {
-
-        List<UserList> userLists = new ArrayList<>();
-        userLists.addAll(wishList.getUserLists());
-        userLists.addAll(offerList.getUserLists());
-        wishList.setUserLists(userLists);
-        offerList.setUserLists(userLists);
-
         Account user = authService.getAuthenticated();
         wishList.setUser(user);
         offerList.setUser(user);
@@ -69,19 +66,39 @@ public class BookExchangeService {
         offerList.setYearPublishing(bookLiterary.getPublishYear());
         offerList.setStatus(Status.NEW);
         offerList.setCreatedAt(LocalDateTime.now());
-        offerList.getUserLists().forEach(
-            ul -> ul.setOfferList(offerList)
-        );
 
         wishList.setCreatedAt(LocalDateTime.now());
         wishList.setUpdatedAt(LocalDateTime.now());
         wishList.setStatus(Status.NEW);
-        wishList.getUserLists().forEach(
-            ul -> ul.setWishList(wishList)
-        );
+
+        saveUserLists(wishList, offerList);
 
         wishListRepository.save(wishList);
         offerListRepository.save(offerList);
+    }
+
+    @Transactional
+    public List<UserList> saveUserLists(WishList wishList, OfferList offerList) {
+        List<UserList> userLists = new ArrayList<>();
+        userLists.addAll(wishList.getUserLists());
+        userLists.addAll(offerList.getUserLists());
+
+        wishList.setUserLists(userLists);
+        offerList.setUserLists(userLists);
+
+        wishList.getUserLists().forEach(
+            ul -> {
+                ul.setWishList(wishList);
+                ul.setOfferList(offerList);
+                ul.getCategories().forEach(
+                    uvc -> {
+                        uvc.setUserList(ul);
+                    }
+                );
+            }
+        );
+
+        return userListRepository.saveAll(userLists);
     }
 
     @Transactional
@@ -138,5 +155,17 @@ public class BookExchangeService {
 
     public boolean existsExchangeList(WishList wish, OfferList offer) {
         return exchangeRepository.existsByFirstWishListIdAndSecondOfferListId(wish.getId(), offer.getId());
+    }
+
+    //TODO c обоих сторон но всрато
+    public List<ExchangeList> getListExchange() {
+        Account account = authService.getAuthenticated();
+        List<ExchangeList> exchangeLists = new ArrayList<>();
+        var listExchange = exchangeRepository.findByFirstOfferListUser(account);
+        exchangeLists.addAll(listExchange);
+        var listExchange1 = exchangeRepository.findBySecondOfferListUser(account);
+        exchangeLists.addAll(listExchange1);
+        eventPublisher.publishEvent(new MyExchangesViewedEvent(this));
+        return listExchange;
     }
 }

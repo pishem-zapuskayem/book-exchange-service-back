@@ -26,7 +26,6 @@ public class CategoryMapper {
         List<UserValueCategory> userValueCategories = categories.stream().map(
                 category -> new UserValueCategory()
                         .setCategory(category)
-                        .setUserList(listOfCategories)
         ).toList();
         listOfCategories.setCategories(userValueCategories);
         return listOfCategories;

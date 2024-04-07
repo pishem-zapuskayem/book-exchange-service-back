@@ -25,15 +25,19 @@ public class OfferList extends AbstractEntity {
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", name = "idBookLiterary")
     private BookLiterary bookLiterary;
+
     @ManyToOne
     @JoinColumn(name = "idUser", referencedColumnName = "id")
     private Account user;
+
     private String isbn;
     private Integer yearPublishing;
     private LocalDateTime createdAt;
+
     @Schema(description = "состояние участия в обмене: свободен, отобран и т.п.")
     @Enumerated(EnumType.ORDINAL)
     private Status status;
+
     @OneToMany
     private List<UserList> userLists;
 
