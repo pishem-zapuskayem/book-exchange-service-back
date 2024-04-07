@@ -32,6 +32,11 @@ public class AccountMapper {
         if (account.getAvatar() != null){
             accountDTO.setUrlAvatar(account.getAvatar().getUrl());
         }
+        if (account.getAccountAddress() != null) {
+            accountDTO.setAddresses(
+                accountAddressMapper.mapEntityListToDTO(account.getAccountAddress())
+            );
+        }
         return accountDTO;
     }
 

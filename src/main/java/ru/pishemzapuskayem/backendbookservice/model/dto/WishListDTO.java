@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class WishListDTO {
     private List<Category> categoryList;
-    private AccountDTO accountDTO;
+    private AccountAddressDTO address;
 }
