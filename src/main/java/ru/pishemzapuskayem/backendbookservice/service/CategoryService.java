@@ -1,13 +1,12 @@
 package ru.pishemzapuskayem.backendbookservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.type.ListType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 import ru.pishemzapuskayem.backendbookservice.repository.CategoryRepository;
 
@@ -43,7 +42,7 @@ public class CategoryService {
     //TODO не делаем дерево
     public List<Category> extractTree(OfferList offerList) {
         return offerList.getUserLists().stream()
-                .filter(ul -> ul.getListType() == TypeList.OFFER_LIST)
+                .filter(ul -> ul.getListType() == ListType.OFFER_LIST)
                 .flatMap(ul -> ul.getCategories().stream())
                 .map(uc -> uc.getCategory())
                 .collect(Collectors.toList());
@@ -83,7 +82,7 @@ public class CategoryService {
 
     public List<Category> extractTree(WishList wish) {
         return wish.getUserLists().stream()
-                .filter(ul -> ul.getListType() == TypeList.WISH_LIST)
+                .filter(ul -> ul.getListType() == ListType.WISH_LIST)
                 .flatMap(ul -> ul.getCategories().stream())
                 .map(uc -> uc.getCategory())
                 .collect(Collectors.toList());

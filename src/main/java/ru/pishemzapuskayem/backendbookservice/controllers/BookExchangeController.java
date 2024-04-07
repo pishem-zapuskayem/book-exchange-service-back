@@ -3,6 +3,7 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookExchangeMapper;
@@ -49,5 +50,20 @@ public class BookExchangeController {
             );
         }
         return ResponseEntity.ok(dtos);
+    }
+
+    @Secured({"USER", "ADMIN"})
+    @PostMapping
+    public ResponseEntity<Void> enterExchange(@RequestParam Long exchangeId) {
+        ExchangeList exchange = bookExchangeService.enterExchange(exchangeId);
+        if (exchange.isBothAgreed()) {
+            bookExchangeService.createActiveExchange(exchange);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping
+    public void markReceived() {
+
     }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class UserList extends AbstractEntity {
     @Enumerated(EnumType.ORDINAL)
-    private TypeList listType;
+    private ListType listType;
 
     @ManyToOne
     @JoinColumn(name = "wishListId", referencedColumnName = "id")

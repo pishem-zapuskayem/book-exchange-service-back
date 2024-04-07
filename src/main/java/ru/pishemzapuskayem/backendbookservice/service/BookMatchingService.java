@@ -12,7 +12,7 @@ import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
 import ru.pishemzapuskayem.backendbookservice.events.UserLoggedInEvent;
 import ru.pishemzapuskayem.backendbookservice.model.Pair;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserValueCategory;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
@@ -76,8 +76,8 @@ public class BookMatchingService {
         for (Pair<WishList, OfferList> pair : allPairs) {
             WishList wish = pair.getFirst();
             OfferList offer = pair.getSecond();
-            Set<Long> wishCategoryIds = getCategoryIdsFor(wish.getUserLists(), TypeList.WISH_LIST);
-            Set<Long> offerCategoryIds = getCategoryIdsFor(offer.getUserLists(), TypeList.OFFER_LIST);
+            Set<Long> wishCategoryIds = getCategoryIdsFor(wish.getUserLists(), ListType.WISH_LIST);
+            Set<Long> offerCategoryIds = getCategoryIdsFor(offer.getUserLists(), ListType.OFFER_LIST);
 
             //todo на будущее делать через мапы
             for (Pair<WishList, OfferList> otherPair : allPairs) {
@@ -87,8 +87,8 @@ public class BookMatchingService {
 
                 WishList otherWish = otherPair.getFirst();
                 OfferList otherOffer = otherPair.getSecond();
-                Set<Long> otherWishCategoryIds = getCategoryIdsFor(otherWish.getUserLists(), TypeList.WISH_LIST);
-                Set<Long> otherOfferCategoryIds = getCategoryIdsFor(otherOffer.getUserLists(), TypeList.OFFER_LIST);
+                Set<Long> otherWishCategoryIds = getCategoryIdsFor(otherWish.getUserLists(), ListType.WISH_LIST);
+                Set<Long> otherOfferCategoryIds = getCategoryIdsFor(otherOffer.getUserLists(), ListType.OFFER_LIST);
 
                 boolean fullMatch = wishCategoryIds.equals(otherOfferCategoryIds) &&
                     otherWishCategoryIds.equals(offerCategoryIds);
@@ -133,7 +133,7 @@ public class BookMatchingService {
         //todo надо было в дао сразу подгружать
         for (WishList wish : wishes) {
             wish.getUserLists().stream()
-                .filter(ul -> ul.getListType() == TypeList.OFFER_LIST)
+                .filter(ul -> ul.getListType() == ListType.OFFER_LIST)
                 .findFirst()
                 .map(ul -> bookExchangeService.findOfferList(ul.getId()))
                 .ifPresent(relatedOffer -> exchangePairs.add(new Pair<>(wish, relatedOffer)));
@@ -142,7 +142,7 @@ public class BookMatchingService {
         return exchangePairs;
     }
 
-    public Set<Long> getCategoryIdsFor(List<UserList> userLists, TypeList listType) {
+    public Set<Long> getCategoryIdsFor(List<UserList> userLists, ListType listType) {
         return userLists.stream()
             .filter(ul -> ul.getListType() == listType)
             .flatMap(ul -> ul.getCategories().stream())

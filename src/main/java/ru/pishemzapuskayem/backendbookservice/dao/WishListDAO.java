@@ -3,14 +3,12 @@ package ru.pishemzapuskayem.backendbookservice.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
-import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.TypeList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserValueCategory;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
@@ -104,7 +102,7 @@ public class WishListDAO {
                         try {
                             return new UserList()
                                 .setId(id)
-                                .setListType(TypeList.byId(rs.getInt("ul_list_type")))
+                                .setListType(ListType.byId(rs.getInt("ul_list_type")))
                                 .setWishList(wishList)
                                 .setCategories(new ArrayList<>());
                         } catch (SQLException e) {

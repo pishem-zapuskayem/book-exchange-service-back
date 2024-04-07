@@ -3,6 +3,7 @@ package ru.pishemzapuskayem.backendbookservice.model.entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,6 +25,7 @@ public class ExchangeList extends AbstractEntity {
         " ссылка на запись в таблице OfferList")
     @ManyToOne
     private OfferList firstOfferList;
+
     @Schema(description = "ЗПК первого пользователя," +
         " ссылка на запись в таблице WishList")
     @ManyToOne
@@ -33,16 +35,29 @@ public class ExchangeList extends AbstractEntity {
         " ссылка на запись в таблице OfferList")
     @ManyToOne
     private OfferList secondOfferList;
+
     @Schema(description = "ЗПК второго пользователя," +
         " ссылка на запись в таблице WishList")
     @ManyToOne
     private WishList secondWishList;
+
     @Schema(description = "Меняется на текущую при подтверждении каждым пользователем участия. Хранит дату, от которой будут отсчитываться периоды: -2 суток до получения подтверждения второго участника; - 7суток до " +
         "отправки книг участниками для случая, когда обмен подтвердили оба")
     private LocalDateTime createdAt;
+
+    @Schema(description = "Когда запись добавляется = false." +
+        " После того, как первый участник подтвердит = true.")
+    private Boolean isFirstAgreed;
+
     @Schema(description = "Когда запись добавляется = false." +
         " После того, как второй участник подтвердит = true.")
-    private Boolean isBoth;
+    private Boolean isSecondAgreed;
+
     @Schema(description = "Полное совпадение")
     private Boolean isFullMatch;
+
+    public boolean isBothAgreed() {
+        return Boolean.TRUE.equals(isFirstAgreed) &&
+            Boolean.TRUE.equals(isSecondAgreed) ;
+    }
 }
