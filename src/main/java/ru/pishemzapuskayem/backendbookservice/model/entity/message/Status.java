@@ -11,7 +11,8 @@ public enum Status {
     IN_WORK(2, "В работе"),
     AWAITING(3, "Ожидает подтверждения"),
     FREE(4, "Свободен"),
-    RESERVED(5, "Участвует в обмене");
+    IN_ACTIVE_EXCHANGE(5, "Участвует в обмене"),
+    RESERVED(6, "Зарезервирован");
 
     private final int id;
     private final String name;

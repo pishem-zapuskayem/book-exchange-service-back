@@ -5,11 +5,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import ru.pishemzapuskayem.backendbookservice.events.MyExchangesViewedEvent;
 import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookExchangeMapper;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookMapper;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeDTO;
+import ru.pishemzapuskayem.backendbookservice.model.dto.UpdateExchangeDeliveryRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
@@ -38,8 +40,9 @@ public class BookExchangeController {
 
     @GetMapping
     public ResponseEntity<?> getListExchangeRequest() {
-        List<ExchangeList> exchanges = bookExchangeService.getListExchange();
-        ArrayList<ExchangeDTO> dtos = new ArrayList<ExchangeDTO>();
+        eventPublisher.publishEvent(new MyExchangesViewedEvent(this));
+        List<ExchangeList> exchanges = bookExchangeService.getExchanges();
+        ArrayList<ExchangeDTO> dtos = new ArrayList<>();
         for (ExchangeList exchangeList : exchanges) {
             dtos.add(
               new ExchangeDTO(
@@ -53,7 +56,7 @@ public class BookExchangeController {
     }
 
     @Secured({"USER", "ADMIN"})
-    @PostMapping
+    @PostMapping("/enter")
     public ResponseEntity<Void> enterExchange(@RequestParam Long exchangeId) {
         ExchangeList exchange = bookExchangeService.enterExchange(exchangeId);
         if (exchange.isBothAgreed()) {
@@ -62,8 +65,19 @@ public class BookExchangeController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping
-    public void markReceived() {
+    @Secured({"USER", "ADMIN"})
+    @PostMapping("/mark-as-received")
+    public void markReceived(@RequestParam Long exchangeId) {
+        bookExchangeService.markAsReceived(exchangeId);
+        bookExchangeService.tryArchive(exchangeId);
+    }
 
+    @Secured({"USER", "ADMIN"})
+    @PostMapping("/set-delivery-number")
+    public void markReceived(
+        @RequestParam Long exchangeId,
+        @RequestBody UpdateExchangeDeliveryRequestDTO deliveryRequestDTO
+    ) {
+        bookExchangeService.setDeliveryTrackNumber(exchangeId, deliveryRequestDTO.getTrackNumber());
     }
 }

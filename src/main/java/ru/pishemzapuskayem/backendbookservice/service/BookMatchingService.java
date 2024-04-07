@@ -20,10 +20,12 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,6 @@ public class BookMatchingService {
     @Async
     @EventListener
     public void handleUserLoggedIn(UserLoggedInEvent event) {
-        // todo точно асинхронно выполняется?
         tryFindMatchingOffers();
     }
 
@@ -72,16 +73,15 @@ public class BookMatchingService {
             return;
         }
         Set<String> createdExchangePairs = new HashSet<>();
-        //todo оптимизация категоризации
         for (Pair<WishList, OfferList> pair : allPairs) {
             WishList wish = pair.getFirst();
             OfferList offer = pair.getSecond();
             Set<Long> wishCategoryIds = getCategoryIdsFor(wish.getUserLists(), ListType.WISH_LIST);
             Set<Long> offerCategoryIds = getCategoryIdsFor(offer.getUserLists(), ListType.OFFER_LIST);
 
-            //todo на будущее делать через мапы
             for (Pair<WishList, OfferList> otherPair : allPairs) {
                 if (pair.equals(otherPair)) continue;
+                if (isFromSameUser(pair, otherPair)) continue;
                 String pairKey = Pair.generatePairKey(new Pair<>(pair, otherPair));
                 if (createdExchangePairs.contains(pairKey)) continue;
 
@@ -101,6 +101,10 @@ public class BookMatchingService {
                 }
             }
         }
+    }
+
+    private boolean isFromSameUser(Pair<WishList, OfferList> pair, Pair<WishList, OfferList> otherPair) {
+        return Objects.equals(pair.getFirst().getUser(), otherPair.getFirst().getUser());
     }
 
     private Map<Long, Set<OfferList>> mapOffersByCategories(List<OfferList> offerLists) {
@@ -128,9 +132,11 @@ public class BookMatchingService {
 
     public List<Pair<WishList, OfferList>> extractExchangePairs() {
         List<Pair<WishList, OfferList>> exchangePairs = new ArrayList<>();
-        List<WishList> wishes = bookExchangeService.findWishList(Status.NEW);
+        List<WishList> wishes = bookExchangeService.findWishesByStatuses(
+            EnumSet.of(Status.NEW, Status.AWAITING)
+        );
 
-        //todo надо было в дао сразу подгружать
+        //todo в дао же сразу подгружаются или здесь ещё запросы отправляются?
         for (WishList wish : wishes) {
             wish.getUserLists().stream()
                 .filter(ul -> ul.getListType() == ListType.OFFER_LIST)

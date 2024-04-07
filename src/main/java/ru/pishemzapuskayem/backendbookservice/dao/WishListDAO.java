@@ -3,8 +3,8 @@ package ru.pishemzapuskayem.backendbookservice.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
@@ -19,25 +19,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
 public class WishListDAO {
-    public final RowMapper<WishList> wishListRowMapper;
-    public final RowMapper<UserList> userListRowMapper;
-    public final RowMapper<UserValueCategory> userValueCategoryRowMapper;
-    public final RowMapper<Category> categoryRowMapper;
+//    public final RowMapper<WishList> wishListRowMapper;
+//    public final RowMapper<UserList> userListRowMapper;
+//    public final RowMapper<UserValueCategory> userValueCategoryRowMapper;
+//    public final RowMapper<Category> categoryRowMapper;
 
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @SneakyThrows
-    public List<WishList> findWishListsByStatus(int status) {
+    public List<WishList> findWishListsByStatus(Set<Status> statuses) {
         Map<Long, WishList> wishListMap = new HashMap<>();
         Map<Long, UserList> userListMap = new HashMap<>();
         Map<Long, Category> categoryMap = new HashMap<>();
-
-        jdbcTemplate.query(
+        namedJdbcTemplate.query(
             """
                     SELECT
                         wl.id AS wl_id,
@@ -69,8 +69,11 @@ public class WishListDAO {
                     LEFT JOIN user_value_category uvc ON ul.id = uvc.user_list_id
                     LEFT JOIN category c ON uvc.category_id = c.id
                     LEFT JOIN account_address aa ON wl.id_user_address = aa.id
-                    WHERE wl.status = ?
+                    WHERE wl.status IN (:statuses)
                 """,
+            Map.of(
+                "statuses", statuses
+            ),
             rs -> {
                 Long wishListId = rs.getLong("wl_id");
                 WishList wishList = wishListMap.computeIfAbsent(wishListId, id -> {
@@ -135,7 +138,7 @@ public class WishListDAO {
                         userList.getCategories().add(userValueCategory);
                     }
                 }
-            }, status
+            }
         );
 
         return new ArrayList<>(wishListMap.values());
