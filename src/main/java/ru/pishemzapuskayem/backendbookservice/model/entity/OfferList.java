@@ -1,6 +1,7 @@
 package ru.pishemzapuskayem.backendbookservice.model.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +11,7 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import ru.pishemzapuskayem.backendbookservice.converters.StatusConverter;
 import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 
 import java.time.LocalDate;
@@ -35,7 +37,7 @@ public class OfferList extends AbstractEntity {
     private LocalDateTime createdAt;
 
     @Schema(description = "состояние участия в обмене: свободен, отобран и т.п.")
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = StatusConverter.class)
     private Status status;
 
     @OneToMany

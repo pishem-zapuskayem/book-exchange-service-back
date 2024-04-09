@@ -112,7 +112,7 @@ public class BookExchangeService {
                 firstPair.getFirst().getId(),
                 secondPair.getFirst().getId()
             )
-        );
+        ); //todo чекать статусы если awaiting то проверять есть ли такой уже
 
         offerListRepository.updateStatusByIds(
             Status.AWAITING.getId(),
@@ -125,17 +125,17 @@ public class BookExchangeService {
         ExchangeList exchangeList = new ExchangeList()
             .setFirstWishList(firstPair.getFirst())
             .setFirstOfferList(firstPair.getSecond())
-            .setSecondWishList(secondPair.getFirst())
-            .setSecondOfferList(secondPair.getSecond())
-            .setCreatedAt(LocalDateTime.now())
-            .setIsFirstAgreed(false)
+        .setSecondWishList(secondPair.getFirst())
+        .setSecondOfferList(secondPair.getSecond())
+        .setCreatedAt(LocalDateTime.now())
+        .setIsFirstAgreed(false)
             .setIsSecondAgreed(false)
             .setIsFullMatch(isFullMatch);
 
         exchangeRepository.save(exchangeList);
-    }
+}
 
-    public List<WishList> findWishesByStatuses(Set<Status> statuses){
+public List<WishList> findWishesByStatuses(Set<Status> statuses){
         return wishListDAO.findWishListsByStatus(statuses);
     }
 
@@ -232,6 +232,7 @@ public class BookExchangeService {
 //            exchange.getId()
 //        );
 
+        //todo объединить в 1 запрос
         List<ExchangeList> exchanges = exchangeRepository.findExchangesWithOffersOrWishes(
             exchange.getFirstOfferList().getId(),
             exchange.getSecondOfferList().getId(),
@@ -239,7 +240,6 @@ public class BookExchangeService {
             exchange.getSecondWishList().getId(),
             exchange.getId()
         );
-
         exchanges.forEach(
             e -> updateStatuses(e, Status.CANCELLED)
         );
