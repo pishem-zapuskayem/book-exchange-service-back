@@ -10,21 +10,9 @@ import ru.pishemzapuskayem.backendbookservice.dao.WishListDAO;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.ExchangeSide;
 import ru.pishemzapuskayem.backendbookservice.model.Pair;
-import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
-import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
-import ru.pishemzapuskayem.backendbookservice.model.entity.BookLiterary;
-import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
-import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.UserExchangeList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.*;
 import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
-import ru.pishemzapuskayem.backendbookservice.repository.ExchangeRepository;
-import ru.pishemzapuskayem.backendbookservice.repository.OfferListRepository;
-import ru.pishemzapuskayem.backendbookservice.repository.UserExchangeListRepository;
-import ru.pishemzapuskayem.backendbookservice.repository.UserListRepository;
-import ru.pishemzapuskayem.backendbookservice.repository.WishListRepository;
+import ru.pishemzapuskayem.backendbookservice.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -249,6 +237,10 @@ public class BookExchangeService {
         exchangeStatusesRepository.save(exchangeStatus);
     }
 
+    public ExchangeSide getMySide(ExchangeList exchange){
+        return getMySide(exchange, authService.getAuthenticated());
+    }
+
     public ExchangeSide getMySide(ExchangeList exchange, Account user) {
         if (user == null || exchange == null) {
             return ExchangeSide.NONE;
@@ -311,5 +303,11 @@ public class BookExchangeService {
         if (booksReceived.get()) {
           updateStatuses(exchangeStatuses.get(0).getExchangeList(), Status.CLOSED);
         }
+    }
+
+    public ExchangeList getExchangeCard(Long id){
+        return exchangeRepository.findById(id).orElseThrow(
+                () -> new ApiException("Такой карты нет")
+        );
     }
 }
