@@ -224,12 +224,24 @@ public class BookExchangeService {
         updateStatuses(exchange, Status.IN_ACTIVE_EXCHANGE);
 
         //todo просто удалять нормально? может лучше статус обновлять на Cancelled?
-        exchangeRepository.deleteExchangesWithOffersOrWishes(
+//        exchangeRepository.deleteExchangesWithOffersOrWishes(
+//            exchange.getFirstOfferList().getId(),
+//            exchange.getSecondOfferList().getId(),
+//            exchange.getFirstWishList().getId(),
+//            exchange.getSecondWishList().getId(),
+//            exchange.getId()
+//        );
+
+        List<ExchangeList> exchanges = exchangeRepository.findExchangesWithOffersOrWishes(
             exchange.getFirstOfferList().getId(),
             exchange.getSecondOfferList().getId(),
             exchange.getFirstWishList().getId(),
             exchange.getSecondWishList().getId(),
             exchange.getId()
+        );
+
+        exchanges.forEach(
+            e -> updateStatuses(e, Status.CANCELLED)
         );
     }
 

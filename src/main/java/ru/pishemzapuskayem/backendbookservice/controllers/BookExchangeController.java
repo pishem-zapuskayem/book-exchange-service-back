@@ -46,6 +46,7 @@ public class BookExchangeController {
         for (ExchangeList exchangeList : exchanges) {
             dtos.add(
               new ExchangeDTO(
+                  exchangeList.getId(),
                   bookMapper.map(exchangeList.getFirstOfferList().getBookLiterary()),
                   bookMapper.map(exchangeList.getSecondOfferList().getBookLiterary()),
                   exchangeList.getIsFullMatch()

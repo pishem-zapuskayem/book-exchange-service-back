@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExchangeDTO {
+    private Long id;
     private BookDTO offerFirst;
     private BookDTO offerSecond;
     private Boolean isFullMatch;

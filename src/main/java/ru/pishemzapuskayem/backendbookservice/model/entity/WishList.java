@@ -24,17 +24,22 @@ public class WishList extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "idUser", referencedColumnName = "id")
     private Account user;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
     @Column(nullable = false)
     @Schema(description = "состояние участия в обмене: свободен, отобран и т.п.")
     @Enumerated(EnumType.ORDINAL)
     private Status status;
+
     @ManyToOne
     @JoinColumn(name = "idUserAddress", referencedColumnName = "id", nullable = false)
     private AccountAddress address;
+
     @OneToMany
     private List<UserList> userLists;
 

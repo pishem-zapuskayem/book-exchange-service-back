@@ -12,7 +12,8 @@ public enum Status {
     AWAITING(3, "Ожидает подтверждения"),
     FREE(4, "Свободен"),
     IN_ACTIVE_EXCHANGE(5, "Участвует в обмене"),
-    RESERVED(6, "Зарезервирован");
+    RESERVED(6, "Зарезервирован"),
+    CANCELLED(7, "Отменён");
 
     private final int id;
     private final String name;

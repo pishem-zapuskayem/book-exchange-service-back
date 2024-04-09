@@ -29,7 +29,7 @@ public class WishListController {
         for (var wish : wishList) {
             wishListDTOS.add(
                 new WishListDTO(
-                    categoryService.extractTree(wish),
+                    categoryService.extractCategories(wish),
                     accountAddressMapper.map(wish.getAddress())
                 )
             );
