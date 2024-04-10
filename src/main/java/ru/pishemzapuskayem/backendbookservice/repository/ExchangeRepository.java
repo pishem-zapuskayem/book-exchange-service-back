@@ -7,8 +7,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ExchangeRepository extends JpaRepository<ExchangeList, Long> {
@@ -45,4 +47,6 @@ public interface ExchangeRepository extends JpaRepository<ExchangeList, Long> {
         @Param("secondWishId") Long secondWishId,
         @Param("excludeExchangeId") Long excludeExchangeId
     );
+
+    Optional<ExchangeList> findByFirstOfferListAndSecondOfferList(OfferList first, OfferList second);
 }

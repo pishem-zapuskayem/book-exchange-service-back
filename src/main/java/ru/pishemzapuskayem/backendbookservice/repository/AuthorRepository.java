@@ -6,4 +6,5 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.Author;
 
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
+    Author findByLastnameAndFirstname(String lastname, String firstname);
 }
