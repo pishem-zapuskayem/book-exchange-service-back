@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookMapper;
 import ru.pishemzapuskayem.backendbookservice.mapper.OfferListMapper;
-import ru.pishemzapuskayem.backendbookservice.model.dto.BookDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.OfferDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.OfferListDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
@@ -35,7 +33,7 @@ public class OfferListController {
             offerListDTOS.add(
                     new OfferListDTO(
                             bookMapper.map(offer.getBookLiterary()),
-                            categoryService.extractTree(offer)
+                            categoryService.extractCategories(offer)
                     )
             );
         }

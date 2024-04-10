@@ -46,11 +46,12 @@ public class BookExchangeController {
         ArrayList<ExchangeDTO> dtos = new ArrayList<>();
         for (ExchangeList exchangeList : exchanges) {
             dtos.add(
-                    new ExchangeDTO(
-                            bookMapper.map(exchangeList.getFirstOfferList().getBookLiterary()),
-                            bookMapper.map(exchangeList.getSecondOfferList().getBookLiterary()),
-                            exchangeList.getIsFullMatch()
-                    )
+              new ExchangeDTO(
+                  exchangeList.getId(),
+                  bookMapper.map(exchangeList.getFirstOfferList().getBookLiterary()),
+                  bookMapper.map(exchangeList.getSecondOfferList().getBookLiterary()),
+                  exchangeList.getIsFullMatch()
+              )
             );
         }
         return ResponseEntity.ok(dtos);

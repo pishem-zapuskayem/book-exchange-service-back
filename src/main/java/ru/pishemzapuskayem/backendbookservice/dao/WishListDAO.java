@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
+import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserValueCategory;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
@@ -20,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -35,6 +38,7 @@ public class WishListDAO {
     @SneakyThrows
     public List<WishList> findWishListsByStatus(Set<Status> statuses) {
         Map<Long, WishList> wishListMap = new HashMap<>();
+        Map<Long, OfferList> offerListMap = new HashMap<>();
         Map<Long, UserList> userListMap = new HashMap<>();
         Map<Long, Category> categoryMap = new HashMap<>();
         namedJdbcTemplate.query(
@@ -45,6 +49,9 @@ public class WishListDAO {
                         wl.updated_at AS wl_updated_at,
                         wl.status AS wl_status,
                         wl.id_user_address AS wl_id_user_address,
+                        ol.id as ol_id,
+                        ol.created_at as ol_created_at,
+                        ol.status as ol_status,
                         ul.id AS ul_id,
                         ul.list_type AS ul_list_type,
                         ul.wish_list_id AS ul_wish_list_id,
@@ -63,16 +70,20 @@ public class WishListDAO {
                         aa.addr_house AS aa_addr_house,
                         aa.addr_structure AS aa_addr_structure,
                         aa.addr_apart AS aa_addr_apart,
-                        aa.is_default AS aa_is_default
+                        aa.is_default AS aa_is_default,
+                        a.id AS acc_id,
+                        a.email AS acc_email
                     FROM wish_list wl
                     LEFT JOIN user_list ul ON wl.id = ul.wish_list_id
                     LEFT JOIN user_value_category uvc ON ul.id = uvc.user_list_id
                     LEFT JOIN category c ON uvc.category_id = c.id
                     LEFT JOIN account_address aa ON wl.id_user_address = aa.id
+                    LEFT JOIN account a ON wl.id_user = a.id
+                    LEFT JOIN offer_list ol ON ol.id = ul.offer_list_id
                     WHERE wl.status IN (:statuses)
                 """,
             Map.of(
-                "statuses", statuses
+                "statuses", statuses.stream().map(Status::getId).collect(Collectors.toSet())
             ),
             rs -> {
                 Long wishListId = rs.getLong("wl_id");
@@ -99,6 +110,19 @@ public class WishListDAO {
                     }
                 });
 
+                Long offerListId = rs.getLong("ol_id");
+                OfferList offerList = offerListMap.computeIfAbsent(offerListId, id -> {
+                    try {
+                        return new OfferList()
+                            .setId(id)
+                            .setCreatedAt(rs.getTimestamp("ol_created_at").toLocalDateTime())
+                            .setStatus(Status.byId(rs.getInt("ol_status")))
+                            .setUserLists(new ArrayList<>());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
                 Long userListId = rs.getLong("ul_id");
                 if (!rs.wasNull()) {
                     UserList userList = userListMap.computeIfAbsent(userListId, id -> {
@@ -107,6 +131,7 @@ public class WishListDAO {
                                 .setId(id)
                                 .setListType(ListType.byId(rs.getInt("ul_list_type")))
                                 .setWishList(wishList)
+                                .setOfferList(offerList)
                                 .setCategories(new ArrayList<>());
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
@@ -115,6 +140,7 @@ public class WishListDAO {
 
                     if (!wishList.getUserLists().contains(userList)) {
                         wishList.getUserLists().add(userList);
+                        offerList.setUserLists(wishList.getUserLists());
                     }
 
                     Long categoryId = rs.getLong("c_id");
@@ -136,6 +162,15 @@ public class WishListDAO {
                             .setCategory(category);
 
                         userList.getCategories().add(userValueCategory);
+                    }
+
+                    Long accountId = rs.getLong("acc_id");
+                    if (!rs.wasNull()) {
+                        Account account = new Account()
+                            .setEmail(rs.getString("acc_email"))
+                            .setId(accountId);
+                        wishList.setUser(account);
+                        offerList.setUser(account);
                     }
                 }
             }

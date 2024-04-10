@@ -9,6 +9,7 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 import ru.pishemzapuskayem.backendbookservice.repository.CategoryRepository;
+import ru.pishemzapuskayem.backendbookservice.repository.WishListRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final WishListRepository wishListRepository;
 
     public Boolean checkFullCategory() {
         return categoryRepository.findAll().isEmpty();
@@ -39,15 +41,6 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    //TODO не делаем дерево
-    public List<Category> extractTree(OfferList offerList) {
-        return offerList.getUserLists().stream()
-                .filter(ul -> ul.getListType() == ListType.OFFER_LIST)
-                .flatMap(ul -> ul.getCategories().stream())
-                .map(uc -> uc.getCategory())
-                .collect(Collectors.toList());
-    }
-
     public Category getById(Long id) {
         return categoryRepository.findById(id)
             .orElseThrow(() -> new ApiException("Родительская категория не найдена"));
@@ -58,6 +51,9 @@ public class CategoryService {
         return buildCategoryTree(allCategories);
     }
 
+    /**
+     * Ожидается что родительские категории уже подгружены или объекты присоединены к сессии
+     */
     private List<Category> buildCategoryTree(List<Category> categories) {
         Map<Long, Category> categoryMap = new HashMap<>();
         List<Category> rootCategories = new ArrayList<>();
@@ -80,11 +76,19 @@ public class CategoryService {
         return rootCategories;
     }
 
-    public List<Category> extractTree(WishList wish) {
+    public List<Category> extractCategories(OfferList offerList) {
+        return offerList.getUserLists().stream()
+            .filter(ul -> ul.getListType() == ListType.OFFER_LIST)
+            .flatMap(ul -> ul.getCategories().stream())
+            .map(uc -> uc.getCategory())
+            .collect(Collectors.toList());
+    }
+
+    public List<Category> extractCategories(WishList wish) {
         return wish.getUserLists().stream()
-                .filter(ul -> ul.getListType() == ListType.WISH_LIST)
-                .flatMap(ul -> ul.getCategories().stream())
-                .map(uc -> uc.getCategory())
-                .collect(Collectors.toList());
+            .filter(ul -> ul.getListType() == ListType.WISH_LIST)
+            .flatMap(ul -> ul.getCategories().stream())
+            .map(uc -> uc.getCategory())
+            .collect(Collectors.toList());
     }
 }

@@ -3,6 +3,7 @@ package ru.pishemzapuskayem.backendbookservice.model.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import ru.pishemzapuskayem.backendbookservice.constants.Roles;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.util.List;
 @Table(name = "account")
 @Getter
 @Setter
+@Accessors(chain = true)
 public class Account extends AbstractEntity{
 
     @Column(name = "last_name")
@@ -59,5 +61,10 @@ public class Account extends AbstractEntity{
 
     public boolean isAdmin() {
         return role != null && role.getName().equals(Roles.ROLE_ADMIN);
+    }
+
+    public Account setId(Long id) {
+        super.setId(id);
+        return this;
     }
 }

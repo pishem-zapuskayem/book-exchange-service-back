@@ -1,6 +1,7 @@
 package ru.pishemzapuskayem.backendbookservice.model.entity.message;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +11,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import ru.pishemzapuskayem.backendbookservice.converters.StatusConverter;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AbstractEntity;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 
@@ -36,7 +38,7 @@ public class UserMessage extends AbstractEntity {
     private String notes;
 
     @Column(name = "IdStatus", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = StatusConverter.class)
     private Status status;
 
     @Column(name = "Type", nullable = false)
