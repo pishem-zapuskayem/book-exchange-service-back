@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
-import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
+import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 
