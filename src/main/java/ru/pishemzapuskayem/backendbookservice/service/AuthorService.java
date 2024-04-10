@@ -34,8 +34,9 @@ public class AuthorService {
 
     @Transactional
     public Author findOrCreateAuthor(Author author) {
-        if (author.getId() != null) {
-            return getById(author.getId());
+        Author oldAuthor = authorRepository.findByLastnameAndFirstname(author.getLastname(), author.getFirstname());
+        if (oldAuthor != null) {
+            return oldAuthor;
         }
         return createAuthor(author);
     }

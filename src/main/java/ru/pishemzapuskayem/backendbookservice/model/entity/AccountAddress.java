@@ -15,7 +15,7 @@ public class AccountAddress extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "id_account")
     private Account account;
-    @Column(name = "addr_index", unique = true)
+    @Column(name = "addr_index")
     private String addrIndex;
     @Column(name = "addr_city")
     private String addrCity;

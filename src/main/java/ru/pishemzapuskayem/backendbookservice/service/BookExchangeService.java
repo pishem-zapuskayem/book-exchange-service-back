@@ -110,20 +110,28 @@ public class BookExchangeService {
             )
         );
 
-        ExchangeList exchangeList = new ExchangeList()
-            .setFirstWishList(firstPair.getFirst())
-            .setFirstOfferList(firstPair.getSecond())
-        .setSecondWishList(secondPair.getFirst())
-        .setSecondOfferList(secondPair.getSecond())
-        .setCreatedAt(LocalDateTime.now())
-        .setIsFirstAgreed(false)
-            .setIsSecondAgreed(false)
-            .setIsFullMatch(isFullMatch);
 
-        exchangeRepository.save(exchangeList);
+
+        if (checkExchangeListDuplicated(firstPair.getSecond(),secondPair.getSecond())){
+            ExchangeList exchangeList = new ExchangeList()
+                    .setFirstWishList(firstPair.getFirst())
+                    .setFirstOfferList(firstPair.getSecond())
+                    .setSecondWishList(secondPair.getFirst())
+                    .setSecondOfferList(secondPair.getSecond())
+                    .setCreatedAt(LocalDateTime.now())
+                    .setIsFirstAgreed(false)
+                    .setIsSecondAgreed(false)
+                    .setIsFullMatch(isFullMatch);
+
+            exchangeRepository.save(exchangeList);
+        }
 }
 
-public List<WishList> findWishesByStatuses(Set<Status> statuses){
+    private boolean checkExchangeListDuplicated(OfferList firstOfferList, OfferList secondOfferList) {
+        return exchangeRepository.findByFirstOfferListAndSecondOfferList(firstOfferList,secondOfferList).isEmpty();
+    }
+
+    public List<WishList> findWishesByStatuses(Set<Status> statuses){
         return wishListDAO.findWishListsByStatus(statuses);
     }
 
