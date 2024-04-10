@@ -2,20 +2,20 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.pishemzapuskayem.backendbookservice.events.MyExchangesViewedEvent;
 import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
+import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookExchangeMapper;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookMapper;
-import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.UpdateExchangeDeliveryRequestDTO;
-import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
+import ru.pishemzapuskayem.backendbookservice.model.ExchangeSide;
+import ru.pishemzapuskayem.backendbookservice.model.dto.*;
+import ru.pishemzapuskayem.backendbookservice.model.entity.*;
 import ru.pishemzapuskayem.backendbookservice.service.BookExchangeService;
+import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ public class BookExchangeController {
     private final BookExchangeMapper bookExchangeMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final BookMapper bookMapper;
+    private final CategoryService categoryService;
 
     @PostMapping
     public ResponseEntity<?> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
@@ -45,14 +46,52 @@ public class BookExchangeController {
         ArrayList<ExchangeDTO> dtos = new ArrayList<>();
         for (ExchangeList exchangeList : exchanges) {
             dtos.add(
-              new ExchangeDTO(
-                  bookMapper.map(exchangeList.getFirstOfferList().getBookLiterary()),
-                  bookMapper.map(exchangeList.getSecondOfferList().getBookLiterary()),
-                  exchangeList.getIsFullMatch()
-              )
+                    new ExchangeDTO(
+                            bookMapper.map(exchangeList.getFirstOfferList().getBookLiterary()),
+                            bookMapper.map(exchangeList.getSecondOfferList().getBookLiterary()),
+                            exchangeList.getIsFullMatch()
+                    )
             );
         }
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/list/card")
+    public ResponseEntity<?> getListExchangeCard(@RequestParam Long id) {
+        ExchangeList exchangeList = bookExchangeService.getExchangeCard(id);
+        ExchangeSide exchangeSide = bookExchangeService.getMySide(exchangeList);
+        OfferList meOfferList = null;
+        OfferList takeOfferList = null;
+        Boolean meIsAgreed = null;
+        Boolean takeIsAgreed = null;
+        switch (exchangeSide) {
+            case FIRST:
+                meOfferList = exchangeList.getFirstOfferList();
+                takeOfferList = exchangeList.getSecondOfferList();
+                meIsAgreed = exchangeList.getIsFirstAgreed();
+                takeIsAgreed = exchangeList.getIsSecondAgreed();
+                break;
+            case SECOND:
+                meOfferList = exchangeList.getSecondOfferList();
+                takeOfferList = exchangeList.getFirstOfferList();
+                meIsAgreed = exchangeList.getIsSecondAgreed();
+                takeIsAgreed = exchangeList.getIsFirstAgreed();
+                break;
+            default:
+                throw new ApiException("Произошла ошибка");
+        }
+        List<Category> categories = categoryService.extractTree(takeOfferList);
+        return ResponseEntity.ok(
+                new ExchangeCardDTO(
+                    new ExchangeGiftDTO(
+                            bookMapper.map(meOfferList.getBookLiterary()),
+                            meIsAgreed),
+                        new ExchangeTakeDTO(
+                                categories,
+                                takeIsAgreed
+                        )
+                )
+        );
     }
 
     @PostMapping("/enter")
@@ -75,8 +114,8 @@ public class BookExchangeController {
     @PostMapping("/set-delivery-number")
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void markReceived(
-        @RequestParam Long exchangeId,
-        @RequestBody UpdateExchangeDeliveryRequestDTO deliveryRequestDTO
+            @RequestParam Long exchangeId,
+            @RequestBody UpdateExchangeDeliveryRequestDTO deliveryRequestDTO
     ) {
         bookExchangeService.setDeliveryTrackNumber(exchangeId, deliveryRequestDTO.getTrackNumber());
     }
