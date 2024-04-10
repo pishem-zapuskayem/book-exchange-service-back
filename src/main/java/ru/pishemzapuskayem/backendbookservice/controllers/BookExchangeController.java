@@ -2,7 +2,6 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -81,7 +80,7 @@ public class BookExchangeController {
             default:
                 throw new ApiException("Произошла ошибка");
         }
-        List<Category> categories = categoryService.extractTree(takeOfferList);
+        List<Category> categories = categoryService.extractCategories(takeOfferList);
         return ResponseEntity.ok(
                 new ExchangeCardDTO(
                     new ExchangeGiftDTO(
