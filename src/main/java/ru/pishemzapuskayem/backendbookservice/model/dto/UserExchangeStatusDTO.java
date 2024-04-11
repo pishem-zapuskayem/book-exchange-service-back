@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExchangeCardDTO {
-   private Long id;
-   private MyOfferDTO exchangeMeDTO;
-   private OtherOfferDTO exchangeGiveDTO;
+public class UserExchangeStatusDTO {
+    private Long id;
+    private String trackNumber;
+    private Boolean receiving;
 }

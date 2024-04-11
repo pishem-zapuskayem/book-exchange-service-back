@@ -16,9 +16,11 @@ import ru.pishemzapuskayem.backendbookservice.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -166,6 +168,13 @@ public class BookExchangeService {
     public List<ExchangeList> getExchanges() {
         Account account = authService.getAuthenticated();
         return exchangeRepository.findByFirstOfferListUserOrSecondOfferListUser(account);
+    }
+
+    public List<ExchangeList> getMyExchangesByStatuses(Set<Status> statuses) {
+        Account account = authService.getAuthenticated();
+        return exchangeRepository.findAllByStatusesAndUser(
+            account, statuses.stream().map(Status::getId).collect(Collectors.toSet())
+        );
     }
 
     @Transactional
@@ -329,5 +338,9 @@ public class BookExchangeService {
         return exchangeRepository.findById(id).orElseThrow(
                 () -> new ApiException("Такой карты нет")
         );
+    }
+
+    public List<UserExchangeList> getExchangeStatuses(Long exchangeId) {
+        return exchangeStatusesRepository.findAllByExchangeListId(exchangeId);
     }
 }
