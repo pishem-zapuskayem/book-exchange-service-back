@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExchangeCardDTO {
+   private Long id;
    private ExchangeGiftDTO exchangeMeDTO;
    private ExchangeTakeDTO exchangeGiveDTO;
 }
