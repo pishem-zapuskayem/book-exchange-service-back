@@ -83,6 +83,7 @@ public class BookExchangeController {
         List<Category> categories = categoryService.extractCategories(takeOfferList);
         return ResponseEntity.ok(
                 new ExchangeCardDTO(
+                    exchangeList.getId(),
                     new ExchangeGiftDTO(
                             bookMapper.map(meOfferList.getBookLiterary()),
                             meIsAgreed),
