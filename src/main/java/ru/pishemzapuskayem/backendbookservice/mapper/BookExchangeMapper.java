@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
+import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeDTO;
+import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ListType;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.UserList;
@@ -48,5 +50,21 @@ public class BookExchangeMapper {
         wishList.setUserLists(userLists);
 
         return wishList;
+    }
+
+    public List<ExchangeDTO> map(List<ExchangeList> exchanges) {
+        List<ExchangeDTO> dtos = new ArrayList<>();
+        for (ExchangeList exchangeList : exchanges) {
+            dtos.add(
+                new ExchangeDTO(
+                    exchangeList.getId(),
+                    bookMapper.map(exchangeList.getFirstOfferList().getBookLiterary()),
+                    bookMapper.map(exchangeList.getSecondOfferList().getBookLiterary()),
+                    exchangeList.getIsFullMatch(),
+                    exchangeList.getFirstOfferList().getStatus()
+                )
+            );
+        }
+        return dtos;
     }
 }

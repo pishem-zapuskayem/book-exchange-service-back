@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ExchangeRepository extends JpaRepository<ExchangeList, Long> {
@@ -49,4 +51,9 @@ public interface ExchangeRepository extends JpaRepository<ExchangeList, Long> {
     );
 
     Optional<ExchangeList> findByFirstOfferListAndSecondOfferList(OfferList first, OfferList second);
+
+    @Query("SELECT e FROM ExchangeList e " +
+        "WHERE (e.firstOfferList.status IN (:statuses) AND e.secondOfferList.status IN (:statuses)) AND " +
+        "(e.firstOfferList.user = :user OR e.secondOfferList.user = :user)")
+    List<ExchangeList> findAllByStatusesAndUser(@Param("user") Account user, @Param("statuses") Set<Integer> statuses);
 }
