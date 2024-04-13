@@ -31,44 +31,41 @@ public class RegistrationService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void registrationAccount(Account account, MultipartFile avatar) {
-        if (avatar != null) {
-            FileAttachment fileAttachment = fileAttachmentService.saveFile(avatar);
-            account.setAvatar(fileAttachment);
+    public void registerAccount(Account account, MultipartFile avatar) {
+        if (account.getAccountAddress().isEmpty()) {
+            throw new ApiException("Адрес не указан");
         }
-        account.setCreatedAt(LocalDateTime.now());
-        account.setEnable(false);
-        account.setRole(roleService.findOrCreateByName(ROLE_USER));
 
         Optional<Account> byEmail = accountRepository.findByEmail(account.getEmail());
         Optional<Account> byUsername = accountRepository.findByUsername(account.getUsername());
-
         if (byEmail.isPresent()){
             throw new ApiException("Такой email уже есть");
         }
-
         if(byUsername.isPresent()){
             throw new ApiException("Такой username уже используется");
         }
 
+        if (avatar != null) {
+            FileAttachment fileAttachment = fileAttachmentService.saveFile(avatar);
+            account.setAvatar(fileAttachment);
+        }
+
+        account.setCreatedAt(LocalDateTime.now());
+        account.setEnable(false);
+        account.setRole(roleService.findOrCreateByName(ROLE_USER));
+        account.setNonLocked(true);
+
         account.setPassword(passwordEncoder.encode(account.getPassword()));
 
-        if (account.getAccountAddress().isEmpty()) {
-            throw new ApiException("Адрес не указан");
-        }
         account.getAccountAddress().get(0).setIsDefault(true);
         Account created = accountRepository.save(account);
 
         ConfirmToken token = tokenService.createToken(created);
-        try {
-            mailService.sendToken(created.getEmail(), token);
-        } catch (Exception e){
-            log.info("Token таково "+ account.getEmail() +" : "+ token.getToken());
-        }
+        mailService.trySendToken(created.getEmail(), token);
     }
 
     @Transactional
-    public void tryEnableAccount(String token) {
+    public void tryConfirmEmail(String token) {
         Optional<ConfirmToken> confirmTokenOpt = tokenService.find(token);
         if (confirmTokenOpt.isEmpty()) {
             throw new IllegalStateException();

@@ -55,6 +55,9 @@ public class Account extends AbstractEntity{
     @JoinColumn(name = "avatar_id")
     private FileAttachment avatar;
 
+    @Column(name = "is_non_locked")
+    private boolean isNonLocked;
+
     @Transient
     private boolean isAdmin;
 
