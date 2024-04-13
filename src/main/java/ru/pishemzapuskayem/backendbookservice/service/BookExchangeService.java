@@ -16,7 +16,6 @@ import ru.pishemzapuskayem.backendbookservice.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -102,7 +101,7 @@ public class BookExchangeService {
                 firstPair.getFirst().getId(),
                 secondPair.getFirst().getId()
             )
-        ); //todo чекать статусы если awaiting то проверять есть ли такой уже
+        );
 
         offerListRepository.updateStatusByIds(
             Status.AWAITING.getId(),
@@ -112,24 +111,24 @@ public class BookExchangeService {
             )
         );
 
-
-
-        if (checkExchangeListDuplicated(firstPair.getSecond(),secondPair.getSecond())){
-            ExchangeList exchangeList = new ExchangeList()
-                    .setFirstWishList(firstPair.getFirst())
-                    .setFirstOfferList(firstPair.getSecond())
-                    .setSecondWishList(secondPair.getFirst())
-                    .setSecondOfferList(secondPair.getSecond())
-                    .setCreatedAt(LocalDateTime.now())
-                    .setIsFirstAgreed(false)
-                    .setIsSecondAgreed(false)
-                    .setIsFullMatch(isFullMatch);
-
-            exchangeRepository.save(exchangeList);
+        if (!isNewExchange(firstPair.getSecond(),secondPair.getSecond())){
+            return;
         }
-}
 
-    private boolean checkExchangeListDuplicated(OfferList firstOfferList, OfferList secondOfferList) {
+        ExchangeList exchangeList = new ExchangeList()
+            .setFirstWishList(firstPair.getFirst())
+            .setFirstOfferList(firstPair.getSecond())
+            .setSecondWishList(secondPair.getFirst())
+            .setSecondOfferList(secondPair.getSecond())
+            .setCreatedAt(LocalDateTime.now())
+            .setIsFirstAgreed(false)
+            .setIsSecondAgreed(false)
+            .setIsFullMatch(isFullMatch);
+
+        exchangeRepository.save(exchangeList);
+    }
+
+    private boolean isNewExchange(OfferList firstOfferList, OfferList secondOfferList) {
         return exchangeRepository.findByFirstOfferListAndSecondOfferList(firstOfferList,secondOfferList).isEmpty();
     }
 
@@ -227,15 +226,6 @@ public class BookExchangeService {
 
         exchangeStatusesRepository.saveAll(exchangeStatuses);
         updateStatuses(exchange, Status.IN_ACTIVE_EXCHANGE);
-
-        //todo просто удалять нормально? может лучше статус обновлять на Cancelled?
-//        exchangeRepository.deleteExchangesWithOffersOrWishes(
-//            exchange.getFirstOfferList().getId(),
-//            exchange.getSecondOfferList().getId(),
-//            exchange.getFirstWishList().getId(),
-//            exchange.getSecondWishList().getId(),
-//            exchange.getId()
-//        );
 
         //todo объединить в 1 запрос
         List<ExchangeList> exchanges = exchangeRepository.findExchangesWithOffersOrWishes(

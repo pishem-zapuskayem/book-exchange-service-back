@@ -1,7 +1,6 @@
 package ru.pishemzapuskayem.backendbookservice.service;
 
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -30,28 +29,36 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = false)
 public class BookMatchingService {
+
+    private static final long FETCH_RATE_IN_MILLIS = 60000;
+
     private final BookExchangeService bookExchangeService;
+    private final RateLimiter rateLimiter;
+
+    public BookMatchingService(BookExchangeService bookExchangeService) {
+        this.bookExchangeService = bookExchangeService;
+        this.rateLimiter = new RateLimiter(FETCH_RATE_IN_MILLIS);
+    }
 
     @Async
     @EventListener
     public void handleUserLoggedIn(UserLoggedInEvent event) {
-        tryFindMatchingOffers();
+        rateLimiter.tryInvoke(this::tryFindMatchingOffers, false);
     }
 
     @Async
     @EventListener
     public void handleMyExchangesViewed(MyExchangesViewedEvent event) {
-        tryFindMatchingOffers();
+        rateLimiter.tryInvoke(this::tryFindMatchingOffers, false);
     }
 
     @Async
     @EventListener
     public void handleListUpdated(OffersUpdatedEvent event) {
-        tryFindMatchingOffers();
+        rateLimiter.tryInvoke(this::tryFindMatchingOffers, true);
     }
 
     public void tryFindMatchingOffers() {
@@ -62,10 +69,6 @@ public class BookMatchingService {
         }
     }
 
-    // todo спам запросами как то обработать
-    // кешировать что можно
-    // аккумуляиция запросов
-    // отталкиваться от кейсов перечисленных выше (события) что конкретно подходт
     @Transactional
     public void findMatchingOffers() {
         List<Pair<WishList, OfferList>> allPairs = extractExchangePairs();
