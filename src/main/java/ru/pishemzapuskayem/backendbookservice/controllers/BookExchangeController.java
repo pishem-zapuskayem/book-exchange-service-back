@@ -170,7 +170,7 @@ public class BookExchangeController {
     @GetMapping("/archive")
     public ResponseEntity<?> getArchiveList(){
         List<ExchangeList> exchanges = bookExchangeService.getMyExchangesByStatuses(
-                Set.of(Status.CANCELLED, Status.CLOSED)
+                Set.of(Status.CLOSED)
         );
         return ResponseEntity.ok(exchangesMapper.map(exchanges));
     }
