@@ -28,7 +28,7 @@ public class CategoryService {
 
     @Transactional
     public Category findOrCreate(Category category) {
-        Optional<Category> categoryOpt = categoryRepository.findByName(category.getName());
+        Optional<Category> categoryOpt = categoryRepository.findByNameAndParent(category.getName(), category.getParent());
         return categoryOpt.orElseGet(() -> createCategory(category));
     }
 
