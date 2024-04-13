@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,7 @@ import ru.pishemzapuskayem.backendbookservice.events.UserLoggedInEvent;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.mapper.AccountMapper;
 import ru.pishemzapuskayem.backendbookservice.model.dto.AccountDTO;
+import ru.pishemzapuskayem.backendbookservice.model.dto.AccountUpdateDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.AuthRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.AuthResponseDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
@@ -45,6 +47,15 @@ public class AuthController {
                         accountService.getAuthenticatedUserData()
                 )
         );
+    }
+
+    @PostMapping("/update")
+    @Secured("ROLE_USER")
+    public ResponseEntity<Void> updateAccount(
+        @RequestBody AccountUpdateDTO accountDTO
+    ) {
+        accountService.update(accountMapper.map(accountDTO));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/sign-in")
