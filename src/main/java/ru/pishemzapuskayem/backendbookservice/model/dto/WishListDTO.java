@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WishListDTO {
+    private Long id;
     private List<Category> categoryList;
     private AccountAddressDTO address;
 }

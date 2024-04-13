@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfferListDTO {
+    private Long id;
     private BookDTO bookDTO;
     private List<Category> categoryDTOList;
 }

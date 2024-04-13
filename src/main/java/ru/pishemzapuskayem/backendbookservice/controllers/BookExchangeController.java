@@ -23,6 +23,7 @@ import ru.pishemzapuskayem.backendbookservice.model.dto.ActiveExchangeCardDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeCardDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeDTO;
+import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeListDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.MyOfferDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.OtherOfferDTO;
 import ru.pishemzapuskayem.backendbookservice.model.dto.UpdateExchangeDeliveryRequestDTO;
@@ -52,7 +53,7 @@ public class BookExchangeController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<?> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
+    public ResponseEntity<Void> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
         WishList wishList = exchangesMapper.mapWishList(dto);
         OfferList offerList = exchangesMapper.mapOfferList(dto);
         bookExchangeService.createExchangeRequest(wishList, offerList);
@@ -70,7 +71,7 @@ public class BookExchangeController {
     }
 
     @GetMapping("/list/card")
-    public ResponseEntity<?> getExchangeCard(@RequestParam Long id) {
+    public ResponseEntity<ExchangeCardDTO> getExchangeCard(@RequestParam Long id) {
         ExchangeList exchange = bookExchangeService.getExchangeCard(id);
         ExchangeSide mySide = bookExchangeService.getMySide(exchange);
         ExchangeSides sides = processSides(exchange, mySide);
@@ -125,7 +126,7 @@ public class BookExchangeController {
     }
 
     @GetMapping("/active/card")
-    public ResponseEntity<?> getActiveExchangeCard(@RequestParam Long id) {
+    public ResponseEntity<ActiveExchangeCardDTO> getActiveExchangeCard(@RequestParam Long id) {
         ExchangeList exchange = bookExchangeService.getExchangeCard(id);
         ExchangeSide mySide = bookExchangeService.getMySide(exchange);
         ExchangeSides sides = processSides(exchange, mySide);
@@ -168,7 +169,7 @@ public class BookExchangeController {
     }
 
     @GetMapping("/archive")
-    public ResponseEntity<?> getArchiveList(){
+    public ResponseEntity<List<ExchangeDTO>> getArchiveList(){
         List<ExchangeList> exchanges = bookExchangeService.getMyExchangesByStatuses(
                 Set.of(Status.CLOSED)
         );

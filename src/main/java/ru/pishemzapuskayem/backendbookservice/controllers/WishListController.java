@@ -23,20 +23,18 @@ public class WishListController {
     private final AccountAddressMapper accountAddressMapper;
 
     @GetMapping
-    public ResponseEntity<?> getWishList() {
+    public ResponseEntity<List<WishListDTO>> getWishList() {
         List<WishList> wishList = wishListService.getWishList();
         List<WishListDTO> wishListDTOS = new ArrayList<>();
         for (var wish : wishList) {
             wishListDTOS.add(
                 new WishListDTO(
+                    wish.getId(),
                     categoryService.extractCategories(wish),
                     accountAddressMapper.map(wish.getAddress())
                 )
             );
         }
-
-        return ResponseEntity.ok(
-                wishListDTOS
-        );
+        return ResponseEntity.ok(wishListDTOS);
     }
 }
