@@ -16,8 +16,8 @@ import java.util.List;
 public class MessageService {
 
     private final AuthService authService;
-    private final UserService userService;
     private final MessageRepository messageRepository;
+    private final AccountService accountService;
 
     public List<UserMessage> findMessagesByUserId(Long userId) {
         if (userId == null) {
@@ -34,7 +34,7 @@ public class MessageService {
                 : MessageType.INCOMING
         );
         message.setUser(
-            userService.getById(message.getId())
+            accountService.getById(message.getId())
         );
         return messageRepository.save(message);
     }
