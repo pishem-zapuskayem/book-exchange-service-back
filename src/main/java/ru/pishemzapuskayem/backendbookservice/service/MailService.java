@@ -3,15 +3,16 @@ package ru.pishemzapuskayem.backendbookservice.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ConfirmToken;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MailService {
     private static final String CONFIRM_TOKEN_SUBJECT = "Активируйте аккаунт";
@@ -39,12 +40,16 @@ public class MailService {
     }
 
     @Async
-    public void sendToken(String email, ConfirmToken token) {
-        sendMessage(
+    public void trySendToken(String email, ConfirmToken token) {
+        try {
+            sendMessage(
                 email,
                 CONFIRM_TOKEN_SUBJECT,
                 buildConfirmTokenMsg(token)
-        );
+            );
+        } catch (Exception e){
+            log.info("Cant send token. Token is "+ email + " : "+ token.getToken());
+        }
     }
 
     private String buildConfirmTokenMsg(ConfirmToken token) {
