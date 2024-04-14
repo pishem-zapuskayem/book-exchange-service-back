@@ -16,5 +16,6 @@ public class AccountDTO {
     private String email;
     private String username;
     private String urlAvatar;
+    private Integer rating;
     private List<AccountAddressDTO> addresses;
 }
