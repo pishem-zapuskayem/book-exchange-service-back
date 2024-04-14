@@ -54,37 +54,37 @@ public class CategoriesInit implements CommandLineRunner {
                 new Category().setName("фантастика").setParent(parentList.get(0)).setMultiselect(false),
                 new Category().setName("эзотерика").setParent(parentList.get(0)).setMultiselect(false),
 
-                new Category().setName("религия и богословие").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("философия и этика").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("биология и этология").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("социология").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("психология").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("наука").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("искусство").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("экономика").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("юриспруденция").setParent(parentList.get(0)).setMultiselect(false),
+                new Category().setName("религия и богословие").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("философия и этика").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("биология и этология").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("социология").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("психология").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("наука").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("искусство").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("экономика").setParent(parentList.get(1)).setMultiselect(false),
+                new Category().setName("юриспруденция").setParent(parentList.get(1)).setMultiselect(false),
 
-                new Category().setName("отличное").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("хорошее").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("потертое").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("плохое").setParent(parentList.get(0)).setMultiselect(false),
+                new Category().setName("отличное").setParent(parentList.get(2)).setMultiselect(false),
+                new Category().setName("хорошее").setParent(parentList.get(2)).setMultiselect(false),
+                new Category().setName("потертое").setParent(parentList.get(2)).setMultiselect(false),
+                new Category().setName("плохое").setParent(parentList.get(2)).setMultiselect(false),
 
-                new Category().setName("отличное").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("хорошее").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("потертое").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("отсутствует").setParent(parentList.get(0)).setMultiselect(false),
+                new Category().setName("отличное").setParent(parentList.get(3)).setMultiselect(false),
+                new Category().setName("хорошее").setParent(parentList.get(3)).setMultiselect(false),
+                new Category().setName("потертое").setParent(parentList.get(3)).setMultiselect(false),
+                new Category().setName("отсутствует").setParent(parentList.get(3)).setMultiselect(false),
 
-                new Category().setName("присутствует").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("отсутствует").setParent(parentList.get(0)).setMultiselect(false),
+                new Category().setName("присутствует").setParent(parentList.get(4)).setMultiselect(false),
+                new Category().setName("отсутствует").setParent(parentList.get(4)).setMultiselect(false),
 
-                new Category().setName("присутствует").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("отсутствует").setParent(parentList.get(0)).setMultiselect(false),
+                new Category().setName("присутствует").setParent(parentList.get(5)).setMultiselect(false),
+                new Category().setName("отсутствует").setParent(parentList.get(5)).setMultiselect(false),
 
-                new Category().setName("русский").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("английский").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("испанский").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("японский").setParent(parentList.get(0)).setMultiselect(false),
-                new Category().setName("китайский").setParent(parentList.get(0)).setMultiselect(false)
+                new Category().setName("русский").setParent(parentList.get(6)).setMultiselect(false),
+                new Category().setName("английский").setParent(parentList.get(6)).setMultiselect(false),
+                new Category().setName("испанский").setParent(parentList.get(6)).setMultiselect(false),
+                new Category().setName("японский").setParent(parentList.get(6)).setMultiselect(false),
+                new Category().setName("китайский").setParent(parentList.get(6)).setMultiselect(false)
         );
     }
 }
