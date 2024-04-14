@@ -35,6 +35,7 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
 import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 import ru.pishemzapuskayem.backendbookservice.service.BookExchangeService;
 import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
+import ru.pishemzapuskayem.backendbookservice.service.RatingService;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -50,6 +51,7 @@ public class BookExchangeController {
     private final ApplicationEventPublisher eventPublisher;
     private final BookMapper bookMapper;
     private final CategoryService categoryService;
+    private final RatingService ratingService;
 
     @PostMapping
     public ResponseEntity<?> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
@@ -103,6 +105,7 @@ public class BookExchangeController {
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void markReceived(@RequestParam Long exchangeId) {
         bookExchangeService.markAsReceived(exchangeId);
+        ratingService.upRatingAccount(exchangeId);
         bookExchangeService.tryArchive(exchangeId);
     }
 

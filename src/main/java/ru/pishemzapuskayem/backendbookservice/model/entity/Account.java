@@ -36,7 +36,7 @@ public class Account extends AbstractEntity{
     private String username;
 
     @Column(name = "rating")
-    private Integer rating;
+    private Integer rating = 0;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
