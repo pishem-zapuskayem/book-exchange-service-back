@@ -34,12 +34,12 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@RequestParam Long id) {
+    public ResponseEntity<AuthorDTO> getById(@RequestParam Long id) {
         return ResponseEntity.ok(authorMapper.map(authorService.getById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<?> createAuthor(@RequestBody CreateAuthorRequestDTO request) {
+    public ResponseEntity<Void> createAuthor(@RequestBody CreateAuthorRequestDTO request) {
         authorService.createAuthor(authorMapper.map(request));
         return ResponseEntity.ok().build();
     }

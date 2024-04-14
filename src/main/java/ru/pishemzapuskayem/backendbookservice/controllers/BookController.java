@@ -34,12 +34,12 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@RequestParam Long id) {
+    public ResponseEntity<BookDTO> getById(@RequestParam Long id) {
         return ResponseEntity.ok(bookMapper.map(bookService.getById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<?> createBook(@RequestBody CreateBookRequestDTO request) {
+    public ResponseEntity<Void> createBook(@RequestBody CreateBookRequestDTO request) {
         bookService.createBook(bookMapper.map(request));
         return ResponseEntity.ok().build();
     }

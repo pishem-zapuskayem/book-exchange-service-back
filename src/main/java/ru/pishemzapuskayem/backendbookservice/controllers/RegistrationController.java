@@ -17,7 +17,7 @@ public class RegistrationController {
     private final AccountMapper accountMapper;
 
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<?> signUp(
+    public ResponseEntity<Void> signUp(
             @RequestPart("user") RegistrationRequestDTO dto,
             @RequestPart(value = "avatar", required = false) MultipartFile avatar
     ) {
