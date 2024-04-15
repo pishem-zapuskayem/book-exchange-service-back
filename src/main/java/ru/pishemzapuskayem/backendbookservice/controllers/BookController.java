@@ -2,6 +2,7 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ public class BookController {
     private final BookMapper bookMapper;
 
     @GetMapping
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<BookDTO>> getBooks() {
         return ResponseEntity.ok(
             bookService.getBooks()
@@ -34,11 +36,13 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<BookDTO> getById(@RequestParam Long id) {
         return ResponseEntity.ok(bookMapper.map(bookService.getById(id)));
     }
 
     @PostMapping
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<Void> createBook(@RequestBody CreateBookRequestDTO request) {
         bookService.createBook(bookMapper.map(request));
         return ResponseEntity.ok().build();

@@ -2,6 +2,7 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ public class OfferListController {
     private final BookMapper bookMapper;
 
     @GetMapping
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<OfferListDTO>> getOfferList(){
         List<OfferList> offerList = offerListService.getOfferListAccount();
         List<OfferListDTO> offerListDTOS = new ArrayList<>();
