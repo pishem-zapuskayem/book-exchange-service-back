@@ -2,7 +2,6 @@ package ru.pishemzapuskayem.backendbookservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -28,11 +26,10 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Slf4j
 public class BookExchangeService {
-    private static final int DAYS_BEFORE_ACCOUNT_LOCK = 3;
-
     private final WishListRepository wishListRepository;
     private final OfferListRepository offerListRepository;
     private final OfferListDAO offerListDAO;
+    private final AccountService userService;
     private final AddressService addressService;
     private final BookService bookService;
     private final AuthService authService;
@@ -40,8 +37,6 @@ public class BookExchangeService {
     private final WishListDAO wishListDAO;
     private final UserListRepository userListRepository;
     private final UserExchangeListRepository exchangeStatusesRepository;
-    private final ScheduledTasksService scheduledTasksService;
-    private final AccountService accountService;
 
     @Transactional
     public void createExchangeRequest(WishList wishList, OfferList offerList) {
@@ -53,7 +48,7 @@ public class BookExchangeService {
         AccountAddress addr = addressService.findOrCreateByIndex(wishList.getAddress());
         wishList.setAddress(addr);
 
-        Account account = accountService.getById(wishList.getUser().getId());
+        Account account = userService.getById(wishList.getUser().getId());
         wishList.setUser(account);
         offerList.setUser(account);
 
@@ -106,7 +101,7 @@ public class BookExchangeService {
                 firstPair.getFirst().getId(),
                 secondPair.getFirst().getId()
             )
-        );
+        ); //todo чекать статусы если awaiting то проверять есть ли такой уже
 
         offerListRepository.updateStatusByIds(
             Status.AWAITING.getId(),
@@ -116,24 +111,24 @@ public class BookExchangeService {
             )
         );
 
-        if (!isNewExchange(firstPair.getSecond(),secondPair.getSecond())){
-            return;
+
+
+        if (checkExchangeListDuplicated(firstPair.getSecond(),secondPair.getSecond())){
+            ExchangeList exchangeList = new ExchangeList()
+                    .setFirstWishList(firstPair.getFirst())
+                    .setFirstOfferList(firstPair.getSecond())
+                    .setSecondWishList(secondPair.getFirst())
+                    .setSecondOfferList(secondPair.getSecond())
+                    .setCreatedAt(LocalDateTime.now())
+                    .setIsFirstAgreed(false)
+                    .setIsSecondAgreed(false)
+                    .setIsFullMatch(isFullMatch);
+
+            exchangeRepository.save(exchangeList);
         }
+}
 
-        ExchangeList exchangeList = new ExchangeList()
-            .setFirstWishList(firstPair.getFirst())
-            .setFirstOfferList(firstPair.getSecond())
-            .setSecondWishList(secondPair.getFirst())
-            .setSecondOfferList(secondPair.getSecond())
-            .setCreatedAt(LocalDateTime.now())
-            .setIsFirstAgreed(false)
-            .setIsSecondAgreed(false)
-            .setIsFullMatch(isFullMatch);
-
-        exchangeRepository.save(exchangeList);
-    }
-
-    private boolean isNewExchange(OfferList firstOfferList, OfferList secondOfferList) {
+    private boolean checkExchangeListDuplicated(OfferList firstOfferList, OfferList secondOfferList) {
         return exchangeRepository.findByFirstOfferListAndSecondOfferList(firstOfferList,secondOfferList).isEmpty();
     }
 
@@ -176,9 +171,20 @@ public class BookExchangeService {
 
     public List<ExchangeList> getMyExchangesByStatuses(Set<Status> statuses) {
         Account account = authService.getAuthenticated();
-        return exchangeRepository.findAllByStatusesAndUser(
-            account, statuses.stream().map(Status::getId).collect(Collectors.toSet())
+        List<ExchangeList> exchangeLists = exchangeRepository.findAllByStatusesAndUser(
+                account, statuses.stream().map(Status::getId).collect(Collectors.toSet())
         );
+        for (ExchangeList exchangeList: exchangeLists) {
+            if (exchangeList.getSecondOfferList().getUser() == account){
+                OfferList saveSecondOfferList = exchangeList.getSecondOfferList();
+                WishList saveSecondWishList = exchangeList.getSecondWishList();
+                exchangeList.setSecondOfferList(exchangeList.getFirstOfferList());
+                exchangeList.setSecondWishList(exchangeList.getFirstWishList());
+                exchangeList.setFirstOfferList(saveSecondOfferList);
+                exchangeList.setFirstWishList(saveSecondWishList);
+            }
+        }
+        return exchangeLists;
     }
 
     @Transactional
@@ -243,24 +249,6 @@ public class BookExchangeService {
         exchanges.forEach(
             e -> updateStatuses(e, Status.CANCELLED)
         );
-
-        long firstUserId = exchange.getFirstOfferList().getUser().getId();
-        long secondUserId = exchange.getSecondOfferList().getUser().getId();
-        long exchangeId = exchange.getId();
-        scheduledTasksService.scheduleTask(TimeUnit.DAYS, DAYS_BEFORE_ACCOUNT_LOCK, () -> {
-            try {
-                UserExchangeList firstStatus = getExchangeStatus(exchangeId, firstUserId);
-                if (StringUtils.isBlank(firstStatus.getTrackNumber())) {
-                    accountService.lockAccountById(firstUserId);
-                }
-                UserExchangeList secondStatus = getExchangeStatus(exchangeId, secondUserId);
-                if (StringUtils.isBlank(secondStatus.getTrackNumber())) {
-                    accountService.lockAccountById(secondUserId);
-                }
-            } catch (Exception e) {
-                log.error("Cant process lock users exchangeId : " + exchangeId, e);
-            }
-        });
     }
 
     @Transactional
@@ -308,10 +296,6 @@ public class BookExchangeService {
                 );
         }
         return exchangeStatus;
-    }
-
-    public UserExchangeList getExchangeStatus(Long exchangeId, Long userId) {
-        return getExchangeStatus(exchangeId, new Account().setId(userId));
     }
 
     @Transactional
