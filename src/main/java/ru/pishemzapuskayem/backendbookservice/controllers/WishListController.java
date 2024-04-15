@@ -2,6 +2,7 @@ package ru.pishemzapuskayem.backendbookservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +24,7 @@ public class WishListController {
     private final AccountAddressMapper accountAddressMapper;
 
     @GetMapping
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<WishListDTO>> getWishList() {
         List<WishList> wishList = wishListService.getWishList();
         List<WishListDTO> wishListDTOS = new ArrayList<>();

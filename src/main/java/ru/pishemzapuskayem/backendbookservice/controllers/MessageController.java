@@ -5,6 +5,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.pishemzapuskayem.backendbookservice.model.entity.message.UserMessage;
@@ -23,12 +24,14 @@ public class MessageController {
 
     @MessageMapping("/connect")
     @SendToUser("/chat")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public List<UserMessage> connectToChat(@Payload Long userId) {
         return messageService.findMessagesByUserId(userId);
     }
 
 
     @MessageMapping("/send")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void sendMessage(@Payload UserMessage message) {
         UserMessage saved = messageService.saveMessage(message);
         messagingTemplate.convertAndSendToUser(

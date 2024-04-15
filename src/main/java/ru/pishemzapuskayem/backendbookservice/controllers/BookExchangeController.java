@@ -7,32 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.pishemzapuskayem.backendbookservice.events.MyExchangesViewedEvent;
 import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookExchangeMapper;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookMapper;
 import ru.pishemzapuskayem.backendbookservice.model.ExchangeSide;
-import ru.pishemzapuskayem.backendbookservice.model.dto.ActiveExchangeCardDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.CreateExchangeRequestDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeCardDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.ExchangeListDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.MyOfferDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.OtherOfferDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.UpdateExchangeDeliveryRequestDTO;
-import ru.pishemzapuskayem.backendbookservice.model.dto.UserExchangeStatusDTO;
-import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
-import ru.pishemzapuskayem.backendbookservice.model.entity.ExchangeList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.UserExchangeList;
-import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
+import ru.pishemzapuskayem.backendbookservice.model.dto.*;
+import ru.pishemzapuskayem.backendbookservice.model.entity.*;
 import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 import ru.pishemzapuskayem.backendbookservice.service.BookExchangeService;
 import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
@@ -55,6 +38,7 @@ public class BookExchangeController {
     private final RatingService ratingService;
 
     @PostMapping
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<Void> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
         WishList wishList = exchangesMapper.mapWishList(dto);
         OfferList offerList = exchangesMapper.mapOfferList(dto);
@@ -64,6 +48,7 @@ public class BookExchangeController {
     }
 
     @GetMapping
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<ExchangeDTO>> getExchanges() {
         eventPublisher.publishEvent(new MyExchangesViewedEvent(this));
         List<ExchangeList> exchanges = bookExchangeService.getMyExchangesByStatuses(
@@ -73,6 +58,7 @@ public class BookExchangeController {
     }
 
     @GetMapping("/list/card")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<ExchangeCardDTO> getExchangeCard(@RequestParam Long id) {
         ExchangeList exchange = bookExchangeService.getExchangeCard(id);
         ExchangeSide mySide = bookExchangeService.getMySide(exchange);
@@ -129,6 +115,7 @@ public class BookExchangeController {
     }
 
     @GetMapping("/active/card")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<ActiveExchangeCardDTO> getActiveExchangeCard(@RequestParam Long id) {
         ExchangeList exchange = bookExchangeService.getExchangeCard(id);
         ExchangeSide mySide = bookExchangeService.getMySide(exchange);
@@ -172,6 +159,7 @@ public class BookExchangeController {
     }
 
     @GetMapping("/archive")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<ExchangeDTO>> getArchiveList(){
         List<ExchangeList> exchanges = bookExchangeService.getMyExchangesByStatuses(
                 Set.of(Status.CLOSED)
