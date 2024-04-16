@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ConfirmToken;
 
 @Service
@@ -16,6 +17,7 @@ import ru.pishemzapuskayem.backendbookservice.model.entity.ConfirmToken;
 @RequiredArgsConstructor
 public class MailService {
     private static final String CONFIRM_TOKEN_SUBJECT = "Активируйте аккаунт";
+    private static final String SEND_ACCOUNT_ADDRESS = "Куда отправлять";
 
     private final JavaMailSender javaMailSender;
 
@@ -56,5 +58,28 @@ public class MailService {
         return "<a href=\"" + frontendUrl +
                 "?token=" + token.getToken() +
                 "\">Подтвердить регистрацию<a/>";
+    }
+
+    @Async
+    public void sendAddressWish(AccountAddress address, String email) {
+        try {
+            sendMessage(
+                    email,
+                    SEND_ACCOUNT_ADDRESS,
+                    buildAddressMsg(address)
+            );
+        } catch (Exception e){
+            log.info("Cant send token. Address is "+ email);
+        }
+    }
+
+    private String buildAddressMsg(AccountAddress address) {
+        return "Адрес для отправки книги: " + "</br>"
+                + "Индекс : " + address.getAddrIndex() + "</br>"
+                + "Город : " + address.getAddrCity() + "</br>"
+                + "Улица : " + address.getAddrStreet() + "</br>"
+                + "Дом : " + address.getAddrHouse() + "</br>"
+                + "Структура : " + address.getAddrStructure() + "</br>"
+                + "Квартира : " + address.getAddrApart();
     }
 }

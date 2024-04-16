@@ -37,6 +37,7 @@ public class BookExchangeService {
     private final WishListDAO wishListDAO;
     private final UserListRepository userListRepository;
     private final UserExchangeListRepository exchangeStatusesRepository;
+    private final MailService mailService;
 
     @Transactional
     public void createExchangeRequest(WishList wishList, OfferList offerList) {
@@ -79,15 +80,15 @@ public class BookExchangeService {
         offerList.setUserLists(userLists);
 
         wishList.getUserLists().forEach(
-            ul -> {
-                ul.setWishList(wishList);
-                ul.setOfferList(offerList);
-                ul.getCategories().forEach(
-                    uvc -> {
-                        uvc.setUserList(ul);
-                    }
-                );
-            }
+                ul -> {
+                    ul.setWishList(wishList);
+                    ul.setOfferList(offerList);
+                    ul.getCategories().forEach(
+                            uvc -> {
+                                uvc.setUserList(ul);
+                            }
+                    );
+                }
         );
 
         return userListRepository.saveAll(userLists);
@@ -96,24 +97,23 @@ public class BookExchangeService {
     @Transactional
     public void createExchangeList(Pair<WishList, OfferList> firstPair, Pair<WishList, OfferList> secondPair, boolean isFullMatch) {
         wishListRepository.updateStatusByIds(
-            Status.AWAITING.getId(),
-            Set.of(
-                firstPair.getFirst().getId(),
-                secondPair.getFirst().getId()
-            )
+                Status.AWAITING.getId(),
+                Set.of(
+                        firstPair.getFirst().getId(),
+                        secondPair.getFirst().getId()
+                )
         ); //todo чекать статусы если awaiting то проверять есть ли такой уже
 
         offerListRepository.updateStatusByIds(
-            Status.AWAITING.getId(),
-            Set.of(
-                firstPair.getSecond().getId(),
-                secondPair.getSecond().getId()
-            )
+                Status.AWAITING.getId(),
+                Set.of(
+                        firstPair.getSecond().getId(),
+                        secondPair.getSecond().getId()
+                )
         );
 
 
-
-        if (checkExchangeListDuplicated(firstPair.getSecond(),secondPair.getSecond())){
+        if (checkExchangeListDuplicated(firstPair.getSecond(), secondPair.getSecond())) {
             ExchangeList exchangeList = new ExchangeList()
                     .setFirstWishList(firstPair.getFirst())
                     .setFirstOfferList(firstPair.getSecond())
@@ -126,19 +126,19 @@ public class BookExchangeService {
 
             exchangeRepository.save(exchangeList);
         }
-}
-
-    private boolean checkExchangeListDuplicated(OfferList firstOfferList, OfferList secondOfferList) {
-        return exchangeRepository.findByFirstOfferListAndSecondOfferList(firstOfferList,secondOfferList).isEmpty();
     }
 
-    public List<WishList> findWishesByStatuses(Set<Status> statuses){
+    private boolean checkExchangeListDuplicated(OfferList firstOfferList, OfferList secondOfferList) {
+        return exchangeRepository.findByFirstOfferListAndSecondOfferList(firstOfferList, secondOfferList).isEmpty();
+    }
+
+    public List<WishList> findWishesByStatuses(Set<Status> statuses) {
         return wishListDAO.findWishListsByStatus(statuses);
     }
 
-    public WishList findWish(Long userListId){
+    public WishList findWish(Long userListId) {
         UserList ul = userListRepository.findById(userListId).orElseThrow(
-            () -> new ApiException("user list not found")
+                () -> new ApiException("user list not found")
         );
         if (ul.getListType() == ListType.OFFER_LIST) {
             throw new ApiException("invalid OFFER_LIST type");
@@ -152,7 +152,7 @@ public class BookExchangeService {
 
     public OfferList findOfferList(Long userListId) {
         UserList ul = userListRepository.findById(userListId).orElseThrow(
-            () -> new ApiException("user list not found")
+                () -> new ApiException("user list not found")
         );
         if (ul.getListType() == ListType.WISH_LIST) {
             throw new ApiException("invalid WISH_LIST type");
@@ -174,8 +174,8 @@ public class BookExchangeService {
         List<ExchangeList> exchangeLists = exchangeRepository.findAllByStatusesAndUser(
                 account, statuses.stream().map(Status::getId).collect(Collectors.toSet())
         );
-        for (ExchangeList exchangeList: exchangeLists) {
-            if (exchangeList.getSecondOfferList().getUser() == account){
+        for (ExchangeList exchangeList : exchangeLists) {
+            if (exchangeList.getSecondOfferList().getUser() == account) {
                 OfferList saveSecondOfferList = exchangeList.getSecondOfferList();
                 WishList saveSecondWishList = exchangeList.getSecondWishList();
                 exchangeList.setSecondOfferList(exchangeList.getFirstOfferList());
@@ -191,7 +191,7 @@ public class BookExchangeService {
     public ExchangeList enterExchange(Long exchangeId) {
         Account user = authService.getAuthenticated();
         ExchangeList exchange = exchangeRepository.findById(exchangeId)
-            .orElseThrow(() -> new ApiException("Exchange not found"));
+                .orElseThrow(() -> new ApiException("Exchange not found"));
 
         if (isAnyOfferHaveStatus(exchange, Status.IN_ACTIVE_EXCHANGE)) {
             throw new ApiException("Exchange is already confirmed by both sides");
@@ -204,35 +204,37 @@ public class BookExchangeService {
 
         if (side == ExchangeSide.FIRST) {
             exchange.setIsFirstAgreed(true);
-        } else {
+        }
+        else {
             exchange.setIsSecondAgreed(true);
         }
 
         updateStatuses(exchange, Status.RESERVED);
+        sendAddressAccount(user, exchange);
 
         return exchangeRepository.save(exchange);
     }
 
     public boolean isAnyOfferHaveStatus(ExchangeList exchange, Status status) {
         return exchange.getFirstWishList().getStatus() == status ||
-            exchange.getSecondWishList().getStatus() == status ||
-            exchange.getFirstOfferList().getStatus() == status ||
-            exchange.getSecondOfferList().getStatus() == status;
+                exchange.getSecondWishList().getStatus() == status ||
+                exchange.getFirstOfferList().getStatus() == status ||
+                exchange.getSecondOfferList().getStatus() == status;
     }
 
     @Async
     @Transactional
     public void createActiveExchange(ExchangeList exchange) {
         List<UserExchangeList> exchangeStatuses = List.of(
-            new UserExchangeList()
-                .setExchangeList(exchange)
-                .setReceiving(false)
-                .setTrackNumber(null)
-                .setOfferList(exchange.getFirstOfferList()),
-            new UserExchangeList()
-                .setExchangeList(exchange)
-                .setReceiving(false)
-                .setOfferList(exchange.getSecondOfferList())
+                new UserExchangeList()
+                        .setExchangeList(exchange)
+                        .setReceiving(false)
+                        .setTrackNumber(null)
+                        .setOfferList(exchange.getFirstOfferList()),
+                new UserExchangeList()
+                        .setExchangeList(exchange)
+                        .setReceiving(false)
+                        .setOfferList(exchange.getSecondOfferList())
         );
 
         exchangeStatusesRepository.saveAll(exchangeStatuses);
@@ -240,14 +242,14 @@ public class BookExchangeService {
 
         //todo объединить в 1 запрос
         List<ExchangeList> exchanges = exchangeRepository.findExchangesWithOffersOrWishes(
-            exchange.getFirstOfferList().getId(),
-            exchange.getSecondOfferList().getId(),
-            exchange.getFirstWishList().getId(),
-            exchange.getSecondWishList().getId(),
-            exchange.getId()
+                exchange.getFirstOfferList().getId(),
+                exchange.getSecondOfferList().getId(),
+                exchange.getFirstWishList().getId(),
+                exchange.getSecondWishList().getId(),
+                exchange.getId()
         );
         exchanges.forEach(
-            e -> updateStatuses(e, Status.CANCELLED)
+                e -> updateStatuses(e, Status.CANCELLED)
         );
     }
 
@@ -267,7 +269,7 @@ public class BookExchangeService {
         exchangeStatusesRepository.save(exchangeStatus);
     }
 
-    public ExchangeSide getMySide(ExchangeList exchange){
+    public ExchangeSide getMySide(ExchangeList exchange) {
         return getMySide(exchange, authService.getAuthenticated());
     }
 
@@ -278,9 +280,11 @@ public class BookExchangeService {
 
         if (user.equals(exchange.getFirstWishList().getUser())) {
             return ExchangeSide.FIRST;
-        } else if (user.equals(exchange.getSecondWishList().getUser())) {
+        }
+        else if (user.equals(exchange.getSecondWishList().getUser())) {
             return ExchangeSide.SECOND;
-        } else {
+        }
+        else {
             return ExchangeSide.NONE;
         }
     }
@@ -290,10 +294,10 @@ public class BookExchangeService {
         List<UserExchangeList> exchangeStatuses = exchangeStatusesRepository.findAllByExchangeListId(exchangeId);
         if (!exchangeStatuses.isEmpty()) {
             exchangeStatus = exchangeStatuses.stream()
-                .filter(es -> user.equals(es.getOfferList().getUser()))
-                .findFirst().orElseThrow(
-                    () -> new ApiException("Exchange status not found")
-                );
+                    .filter(es -> user.equals(es.getOfferList().getUser()))
+                    .findFirst().orElseThrow(
+                            () -> new ApiException("Exchange status not found")
+                    );
         }
         return exchangeStatus;
     }
@@ -301,19 +305,19 @@ public class BookExchangeService {
     @Transactional
     public void updateStatuses(ExchangeList exchange, Status status) {
         wishListRepository.updateStatusByIds(
-            status.getId(),
-            Set.of(
-                exchange.getFirstWishList().getId(),
-                exchange.getSecondWishList().getId()
-            )
+                status.getId(),
+                Set.of(
+                        exchange.getFirstWishList().getId(),
+                        exchange.getSecondWishList().getId()
+                )
         );
 
         offerListRepository.updateStatusByIds(
-            status.getId(),
-            Set.of(
-                exchange.getFirstOfferList().getId(),
-                exchange.getSecondOfferList().getId()
-            )
+                status.getId(),
+                Set.of(
+                        exchange.getFirstOfferList().getId(),
+                        exchange.getSecondOfferList().getId()
+                )
         );
     }
 
@@ -321,21 +325,21 @@ public class BookExchangeService {
     @Transactional
     public void tryArchive(Long exchangeId) {
         List<UserExchangeList> exchangeStatuses =
-            exchangeStatusesRepository.findAllByExchangeListId(exchangeId);
+                exchangeStatusesRepository.findAllByExchangeListId(exchangeId);
         AtomicBoolean booksReceived = new AtomicBoolean(true);
         exchangeStatuses.forEach(
-            status -> {
-                if (!status.getReceiving()) {
-                    booksReceived.set(false);
+                status -> {
+                    if (!status.getReceiving()) {
+                        booksReceived.set(false);
+                    }
                 }
-            }
         );
         if (booksReceived.get()) {
-          updateStatuses(exchangeStatuses.get(0).getExchangeList(), Status.CLOSED);
+            updateStatuses(exchangeStatuses.get(0).getExchangeList(), Status.CLOSED);
         }
     }
 
-    public ExchangeList getExchangeCard(Long id){
+    public ExchangeList getExchangeCard(Long id) {
         return exchangeRepository.findById(id).orElseThrow(
                 () -> new ApiException("Такой карты нет")
         );
@@ -343,5 +347,16 @@ public class BookExchangeService {
 
     public List<UserExchangeList> getExchangeStatuses(Long exchangeId) {
         return exchangeStatusesRepository.findAllByExchangeListId(exchangeId);
+    }
+
+    public void sendAddressAccount(Account user, ExchangeList exchange) {
+        if (exchange.getFirstOfferList().getUser() == user) {
+            mailService.sendAddressWish(exchange.getFirstWishList().getAddress(),
+                    exchange.getFirstWishList().getUser().getEmail());
+        }
+        else {
+            mailService.sendAddressWish(exchange.getSecondWishList().getAddress(),
+                    exchange.getSecondWishList().getUser().getEmail());
+        }
     }
 }
