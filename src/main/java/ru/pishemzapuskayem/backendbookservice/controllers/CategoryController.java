@@ -22,7 +22,6 @@ public class CategoryController {
 
 
     @GetMapping("/tree")
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<Category>> getCategories() {
         return ResponseEntity.ok(categoryService.getCategoryTree());
     }

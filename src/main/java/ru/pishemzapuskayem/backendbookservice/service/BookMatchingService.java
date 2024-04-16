@@ -136,7 +136,7 @@ public class BookMatchingService {
     public List<Pair<WishList, OfferList>> extractExchangePairs() {
         List<Pair<WishList, OfferList>> exchangePairs = new ArrayList<>();
         List<WishList> wishes = bookExchangeService.findWishesByStatuses(
-            EnumSet.of(Status.NEW, Status.AWAITING)
+            EnumSet.of(Status.NEW, Status.AWAITING, Status.CANCELLED)
         );
 
         //todo в дао же сразу подгружаются или здесь ещё запросы отправляются?
