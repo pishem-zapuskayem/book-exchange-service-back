@@ -30,7 +30,7 @@ jwt:
 urls:
   me: ${BACKEND_URL:http://localhost:8080}
   frontend: ${CLIENT_URL:http://localhost:4200}
-  confirm-token-url: ${CONFIRM_TOKEN_URL:http://localhost:4200/auth/confirm}
+  confirm-token-url: ${CONFIRM_TOKEN_URL:http://localhost:4200/confirm}
 
 files:
   storage-directory: ${STORAGE_DIRECTORY:./images}
