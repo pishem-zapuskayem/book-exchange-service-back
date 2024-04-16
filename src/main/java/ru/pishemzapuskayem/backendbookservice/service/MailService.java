@@ -23,8 +23,8 @@ public class MailService {
 
     @Value("${mail.username}")
     private String mailFrom;
-    @Value("${urls.frontend}")
-    private String frontendUrl;
+    @Value("${urls.confirm-token-url}")
+    private String confirmTokenUrl;
 
     public void sendMessage(String email, String subject, String msg) {
         MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
@@ -55,7 +55,7 @@ public class MailService {
     }
 
     private String buildConfirmTokenMsg(ConfirmToken token) {
-        return "<a href=\"" + frontendUrl +
+        return "<a href=\"" + confirmTokenUrl +
                 "?token=" + token.getToken() +
                 "\">Подтвердить регистрацию<a/>";
     }
