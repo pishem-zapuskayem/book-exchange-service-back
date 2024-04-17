@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.pishemzapuskayem.backendbookservice.events.MyExchangesViewedEvent;
 import ru.pishemzapuskayem.backendbookservice.events.OffersUpdatedEvent;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
+import ru.pishemzapuskayem.backendbookservice.mapper.AccountAddressMapper;
+import ru.pishemzapuskayem.backendbookservice.mapper.AccountMapper;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookExchangeMapper;
 import ru.pishemzapuskayem.backendbookservice.mapper.BookMapper;
 import ru.pishemzapuskayem.backendbookservice.model.ExchangeSide;
@@ -36,13 +38,14 @@ public class BookExchangeController {
     private final BookMapper bookMapper;
     private final CategoryService categoryService;
     private final RatingService ratingService;
-
+    private final AccountAddressMapper accountAddressMapper;
     @PostMapping
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<Void> createExchangeRequest(@RequestBody CreateExchangeRequestDTO dto) {
         WishList wishList = exchangesMapper.mapWishList(dto);
         OfferList offerList = exchangesMapper.mapOfferList(dto);
-        bookExchangeService.createExchangeRequest(wishList, offerList);
+        AccountAddress accountAddress = accountAddressMapper.map(dto.getAddress());
+        bookExchangeService.createExchangeRequest(wishList, offerList, accountAddress);
         eventPublisher.publishEvent(new OffersUpdatedEvent(this));
         return ResponseEntity.ok().build();
     }

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
+import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
 import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.repository.AccountAddressRepository;
 
@@ -32,6 +33,21 @@ public class AddressService {
         );
         return address.orElseGet(
             () -> createAddress(accountAddress)
+        );
+    }
+
+    @Transactional
+    public AccountAddress findOrCreate(AccountAddress addressWish, Account user) {
+        Optional<AccountAddress> address =
+                accountAddressRepository.findByAddrIndexAndAddrCityAndAddrStreetAndAddrHouseAndAddrStructureAndAddrApart(
+                addressWish.getAddrIndex(), addressWish.getAddrCity(), addressWish.getAddrStreet(),
+                addressWish.getAddrHouse(), addressWish.getAddrStructure(), addressWish.getAddrApart()
+        );
+        return address.orElseGet(
+                () -> {
+                    addressWish.setAccount(user);
+                    return createAddress(addressWish);
+                }
         );
     }
 }

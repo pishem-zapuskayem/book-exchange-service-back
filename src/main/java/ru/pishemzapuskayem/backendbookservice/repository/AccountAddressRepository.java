@@ -9,4 +9,13 @@ import java.util.Optional;
 @Repository
 public interface AccountAddressRepository extends JpaRepository<AccountAddress, Long> {
     Optional<AccountAddress> findByAddrIndex(String addrIndex);
+
+    Optional<AccountAddress> findByAddrIndexAndAddrCityAndAddrStreetAndAddrHouseAndAddrStructureAndAddrApart(
+            String addrIndex,
+            String addrCity,
+            String addrStreet,
+            String addrHouse,
+            String addrStructure,
+            String addrApart
+    );
 }
