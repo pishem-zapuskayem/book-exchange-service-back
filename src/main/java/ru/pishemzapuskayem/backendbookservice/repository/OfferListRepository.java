@@ -18,4 +18,7 @@ public interface OfferListRepository extends JpaRepository<OfferList, Long> {
     void updateStatusByIds(@Param("status") Integer status, @Param("ids") Set<Long> ids);
 
     List<OfferList> findByUser(Account account);
+
+    @Query(value = "SELECT o FROM OfferList o WHERE o.status IN (:statuses) AND o.user = :user")
+    List<OfferList> findByStatusesAndUser(@Param("statuses") Set<Integer> statuses, @Param("user") Account user);
 }
