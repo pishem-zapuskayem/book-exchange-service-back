@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = false)
 public class BookMatchingService {
 
-    private static final long FETCH_RATE_IN_MILLIS = 60000;
+    private static final long FETCH_RATE_IN_MILLIS = 60000*5;
 
     private final BookExchangeService bookExchangeService;
     private final RateLimiter rateLimiter;

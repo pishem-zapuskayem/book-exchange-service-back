@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pishemzapuskayem.backendbookservice.exception.ApiException;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
+import ru.pishemzapuskayem.backendbookservice.model.entity.AccountAddress;
 import ru.pishemzapuskayem.backendbookservice.model.entity.ConfirmToken;
 import ru.pishemzapuskayem.backendbookservice.model.entity.FileAttachment;
 import ru.pishemzapuskayem.backendbookservice.repository.AccountRepository;
@@ -29,6 +30,7 @@ public class RegistrationService {
     private final TokenService tokenService;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+    private final AddressService addressService;
 
     @Transactional
     public void registerAccount(Account account, MultipartFile avatar) {
@@ -59,7 +61,9 @@ public class RegistrationService {
 
         account.getAccountAddress().get(0).setIsDefault(true);
         Account created = accountRepository.save(account);
-
+        AccountAddress address = created.getAccountAddress().get(0);
+        address.setAccount(created);
+        addressService.createAddress(address);
         ConfirmToken token = tokenService.createToken(created);
         mailService.trySendToken(created.getEmail(), token);
     }

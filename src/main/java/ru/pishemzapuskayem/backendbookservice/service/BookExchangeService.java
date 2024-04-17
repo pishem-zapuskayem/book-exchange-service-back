@@ -40,13 +40,13 @@ public class BookExchangeService {
     private final MailService mailService;
 
     @Transactional
-    public void createExchangeRequest(WishList wishList, OfferList offerList) {
+    public void createExchangeRequest(WishList wishList, OfferList offerList, AccountAddress accountAddress) {
         Account user = authService.getAuthenticated();
         wishList.setUser(user);
         offerList.setUser(user);
 
         wishList.getAddress().setAccount(user);
-        AccountAddress addr = addressService.findOrCreateByIndex(wishList.getAddress());
+        AccountAddress addr = addressService.findOrCreate(wishList.getAddress(), user);
         wishList.setAddress(addr);
 
         Account account = userService.getById(wishList.getUser().getId());
