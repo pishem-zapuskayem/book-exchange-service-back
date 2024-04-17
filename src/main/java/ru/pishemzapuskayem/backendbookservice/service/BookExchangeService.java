@@ -238,7 +238,6 @@ public class BookExchangeService {
         );
 
         exchangeStatusesRepository.saveAll(exchangeStatuses);
-        updateStatuses(exchange, Status.IN_ACTIVE_EXCHANGE);
 
         //todo объединить в 1 запрос
         List<ExchangeList> exchanges = exchangeRepository.findExchangesWithOffersOrWishes(
@@ -248,9 +247,11 @@ public class BookExchangeService {
                 exchange.getSecondWishList().getId(),
                 exchange.getId()
         );
+        // ахтунг!!! обе стороны меняются не перемещать снизу обновление статусов
         exchanges.forEach(
                 e -> updateStatuses(e, Status.CANCELLED)
         );
+        updateStatuses(exchange, Status.IN_ACTIVE_EXCHANGE);
     }
 
     @Transactional
