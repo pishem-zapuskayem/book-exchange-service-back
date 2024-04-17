@@ -4,14 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pishemzapuskayem.backendbookservice.model.entity.Account;
-import ru.pishemzapuskayem.backendbookservice.model.entity.BookLiterary;
-import ru.pishemzapuskayem.backendbookservice.model.entity.Category;
 import ru.pishemzapuskayem.backendbookservice.model.entity.OfferList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 import ru.pishemzapuskayem.backendbookservice.repository.OfferListRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,5 +24,12 @@ public class OfferListService {
         Account account = authService.getAuthenticated();
         List<OfferList> offerList = offerListRepository.findByUser(account);
         return offerList;
+    }
+
+    public List<OfferList> getOfferListsByStatuses(Set<Status> statuses) {
+        Account account = authService.getAuthenticated();
+        return offerListRepository.findByStatusesAndUser(
+            statuses.stream().map(Status::getId).collect(Collectors.toSet()), account
+        );
     }
 }

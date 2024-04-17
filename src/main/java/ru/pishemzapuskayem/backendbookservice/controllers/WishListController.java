@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.pishemzapuskayem.backendbookservice.mapper.AccountAddressMapper;
 import ru.pishemzapuskayem.backendbookservice.model.dto.WishListDTO;
 import ru.pishemzapuskayem.backendbookservice.model.entity.WishList;
+import ru.pishemzapuskayem.backendbookservice.model.entity.message.Status;
 import ru.pishemzapuskayem.backendbookservice.service.CategoryService;
 import ru.pishemzapuskayem.backendbookservice.service.WishListService;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 @RestController
@@ -26,14 +28,17 @@ public class WishListController {
     @GetMapping
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<WishListDTO>> getWishList() {
-        List<WishList> wishList = wishListService.getWishList();
+        List<WishList> wishList = wishListService.getWishListsByStatuses(
+            EnumSet.of(Status.AWAITING, Status.NEW, Status.CANCELLED)
+        );
         List<WishListDTO> wishListDTOS = new ArrayList<>();
         for (var wish : wishList) {
             wishListDTOS.add(
                 new WishListDTO(
                     wish.getId(),
                     categoryService.extractCategories(wish),
-                    accountAddressMapper.map(wish.getAddress())
+                    accountAddressMapper.map(wish.getAddress()),
+                    wish.getStatus()
                 )
             );
         }
